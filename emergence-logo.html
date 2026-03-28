@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergence — Logo System</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #0d0d0b;
+  color: #4a4a42;
+  font-family: 'Courier New', 'Lucida Console', monospace;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 52px;
+  padding: 60px 24px;
+}
+.section-label {
+  font-size: 9px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: #2a2a22;
+  margin-bottom: -36px;
+  width: 100%;
+  text-align: center;
+}
+.variants {
+  display: flex;
+  gap: 36px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+}
+.variant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.vlabel {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #252520;
+}
+.wordmark-wrap {
+  width: 100%;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.wordmark-wrap svg { width: 100%; display: block; }
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+button {
+  font-family: inherit;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  background: transparent;
+  border: 1px solid #232320;
+  color: #3a3a32;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: border-color 0.18s, color 0.18s;
+  outline: none;
+}
+button:hover { border-color: #C4922A; color: #C4922A; }
+.note {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: #1e1e18;
+  text-align: center;
+  line-height: 2;
+}
+.divider { width: 60px; height: 1px; background: #1a1a14; }
+/* checkerboard to show transparency */
+.check-bg {
+  background-image:
+    linear-gradient(45deg, #1e1e18 25%, transparent 25%),
+    linear-gradient(-45deg, #1e1e18 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1e1e18 75%),
+    linear-gradient(-45deg, transparent 75%, #1e1e18 75%);
+  background-size: 10px 10px;
+  background-position: 0 0, 0 5px, 5px -5px, -5px 0px;
+  background-color: #141410;
+}
+</style>
+</head>
+<body>
+
+<div class="section-label">Emergence — Logo System</div>
+
+<div class="variants">
+
+  <!-- Dark -->
+  <div class="variant">
+    <svg id="mk-dark" width="180" height="180" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="400" fill="#0a0a08"/>
+      <path id="gr-dark" fill="none" stroke="#151510" stroke-width="0.8"/>
+      <path id="sp-dark" fill="none" stroke="#C4922A" stroke-width="5.5" stroke-linecap="butt" stroke-linejoin="round"/>
+    </svg>
+    <div class="vlabel">dark</div>
+  </div>
+
+  <!-- Light -->
+  <div class="variant">
+    <svg id="mk-light" width="180" height="180" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="400" fill="#f4f1ea"/>
+      <defs>
+        <filter id="sf-light" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
+          <feOffset dx="3" dy="5" result="offset"/>
+          <feFlood flood-color="#7A5018" flood-opacity="0.32" result="color"/>
+          <feComposite in="color" in2="offset" operator="in" result="shadow"/>
+          <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="gr-light"></g>
+      <g id="sp-light-g" filter="url(#sf-light)"></g>
+    </svg>
+    <div class="vlabel">light</div>
+  </div>
+
+  <!-- Light transparent -->
+  <div class="variant">
+    <svg id="mk-light-trans" class="check-bg" width="180" height="180" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="sf-light-trans" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur"/>
+          <feOffset dx="3" dy="5" result="offset"/>
+          <feFlood flood-color="#7A5018" flood-opacity="0.32" result="color"/>
+          <feComposite in="color" in2="offset" operator="in" result="shadow"/>
+          <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="gr-light-trans"></g>
+      <g id="sp-light-trans-g" filter="url(#sf-light-trans)"></g>
+    </svg>
+    <div class="vlabel">light transparent</div>
+  </div>
+
+  <!-- Dark transparent -->
+  <div class="variant">
+    <svg id="mk-trans" class="check-bg" width="180" height="180" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <path id="gr-trans" fill="none" stroke="rgba(196,146,42,0.07)" stroke-width="0.8"/>
+      <path id="sp-trans" fill="none" stroke="#C4922A" stroke-width="5.5" stroke-linecap="butt" stroke-linejoin="round"/>
+    </svg>
+    <div class="vlabel">dark transparent</div>
+  </div>
+
+  <!-- Badge -->
+  <div class="variant">
+    <svg id="mk-badge" width="180" height="180" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <rect width="400" height="400" fill="#0a0a08"/>
+      <rect x="1" y="1" width="398" height="398" fill="none" stroke="#C4922A" stroke-width="1.2" opacity="0.35"/>
+      <path id="gr-badge" fill="none" stroke="#151510" stroke-width="0.8"/>
+      <path id="sp-badge" fill="none" stroke="#C4922A" stroke-width="5.5" stroke-linecap="butt" stroke-linejoin="round"/>
+    </svg>
+    <div class="vlabel">badge</div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<div class="wordmark-wrap">
+  <svg id="wm" viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg">
+    <rect width="680" height="180" fill="#0a0a08"/>
+    <path id="sp-wm" fill="none" stroke="#C4922A" stroke-width="5.5" stroke-linecap="butt" stroke-linejoin="round"/>
+    <text
+      font-family="'Courier New', 'Lucida Console', monospace"
+      font-size="40"
+      fill="#6a6a60"
+      letter-spacing="9"
+      x="195"
+      y="90"
+      dominant-baseline="central"
+    >EMERGENCE</text>
+  </svg>
+  <div class="vlabel">wordmark</div>
+</div>
+
+<div class="divider"></div>
+
+<div class="actions">
+  <button onclick="dl('mk-dark','emergence-mark-dark.png')">↓ dark</button>
+  <button onclick="dl('mk-light','emergence-mark-light.png')">↓ light</button>
+  <button onclick="dl('mk-light-trans','emergence-mark-light-transparent.png')">↓ light transparent</button>
+  <button onclick="dl('mk-trans','emergence-mark-dark-transparent.png')">↓ dark transparent</button>
+  <button onclick="dl('mk-badge','emergence-mark-badge.png')">↓ badge</button>
+  <button onclick="dl('wm','emergence-wordmark.png')">↓ wordmark</button>
+</div>
+
+<div class="note">downloads as 3× PNG · reload for new grid variation</div>
+
+<script>
+(function () {
+
+  const PHI   = 1.618033988749895;
+  const B     = Math.log(PHI) / (Math.PI / 2);
+  const R0    = 3.0;
+  const T_MAX = 13.2;
+  const N     = 700;
+  const CX = 152, CY = 222;
+
+  function spiralPath(cx, cy, rScale, tMax) {
+    const parts = [];
+    for (let i = 0; i <= N; i++) {
+      const t = (i / N) * tMax;
+      const r = R0 * rScale * Math.exp(B * t);
+      parts.push((i === 0 ? 'M' : 'L') +
+        (cx + r * Math.cos(t)).toFixed(2) + ',' +
+        (cy + r * Math.sin(t)).toFixed(2));
+    }
+    return parts.join('');
+  }
+
+  function gridPath(cx, cy, rScale) {
+    const au = 16 * rScale;
+    const sc = au / 20;
+    return [
+      [0,0,20,20], [-20,0,20,20], [-20,20,40,40],
+      [20,0,60,60], [-20,-100,100,100], [-180,-100,160,160]
+    ].map(([x,y,w,h]) => {
+      const sx=(cx+x*sc).toFixed(1), sy=(cy+y*sc).toFixed(1);
+      const sw=(w*sc).toFixed(1),    sh=(h*sc).toFixed(1);
+      return `M${sx},${sy}h${sw}v${sh}h-${sw}Z`;
+    }).join(' ');
+  }
+
+  // Tapered spiral segments — strictly monotonically increasing width
+  function taperedSegments(cx, cy, rScale, tMax, steps) {
+    const segs = [];
+    let prevSw = 0;
+    const overlap = tMax / steps * 0.3;
+    for (let i = 0; i < steps; i++) {
+      const t0 = Math.max(0, (i / steps) * tMax - overlap);
+      const t1 = ((i + 1) / steps) * tMax;
+      const pts = [];
+      for (let j = 0; j <= 10; j++) {
+        const t = t0 + (t1 - t0) * (j / 10);
+        const r = R0 * rScale * Math.exp(B * t);
+        pts.push((cx + r * Math.cos(t)).toFixed(2) + ',' + (cy + r * Math.sin(t)).toFixed(2));
+      }
+      const progress = i / steps;
+      const eased = Math.pow(progress, 2.4);
+      const rawSw = 0.6 + eased * 14.4;
+      const sw = Math.max(prevSw, rawSw).toFixed(2);
+      prevSw = parseFloat(sw);
+      segs.push({ d: 'M' + pts.join('L'), sw });
+    }
+    return segs;
+  }
+
+  // Drafting paper grid into a <g> element
+  function buildGrid(g) {
+    const W = 400, H = 400, STEP = 22;
+    const ns = 'http://www.w3.org/2000/svg';
+    const rand = (a, b) => a + Math.random() * (b - a);
+    const edgeFade = (pos, size) => {
+      const d = Math.min(pos, size - pos) / (size * 0.38);
+      return Math.max(0, Math.min(1, d * d));
+    };
+    const pencilLine = (x1, y1, x2, y2, op) => {
+      const cx = (x1+x2)/2, cy = (y1+y2)/2;
+      const len = Math.sqrt((x2-x1)**2+(y2-y1)**2);
+      const ang = Math.atan2(y2-y1, x2-x1) * 180 / Math.PI;
+      for (let p = 0; p < 2; p++) {
+        const el = document.createElementNS(ns, 'ellipse');
+        const jx = rand(-0.4,0.4), jy = rand(-0.4,0.4);
+        el.setAttribute('cx', (cx+jx).toFixed(1));
+        el.setAttribute('cy', (cy+jy).toFixed(1));
+        el.setAttribute('rx', ((len/2)*rand(0.92,1.0)).toFixed(1));
+        el.setAttribute('ry', rand(0.5,1.1).toFixed(2));
+        el.setAttribute('fill', '#6a6252');
+        el.setAttribute('opacity', (op*rand(0.75,1.0)).toFixed(3));
+        el.setAttribute('transform',
+          `rotate(${(ang+rand(-0.5,0.5)).toFixed(2)} ${(cx+jx).toFixed(1)} ${(cy+jy).toFixed(1)})`);
+        g.appendChild(el);
+      }
+    };
+    for (let x = STEP; x < W; x += STEP) {
+      const f = edgeFade(x, W); if (f < 0.04) continue;
+      pencilLine(x, 0, x, H, f * 0.33);
+    }
+    for (let y = STEP; y < H; y += STEP) {
+      const f = edgeFade(y, H); if (f < 0.04) continue;
+      pencilLine(0, y, W, y, f * 0.33);
+    }
+  }
+
+  // Populate static spiral marks
+  const mainSpiral = spiralPath(CX, CY, 1, T_MAX);
+  const mainGrid   = gridPath(CX, CY, 1);
+  ['dark','trans','badge'].forEach(v => {
+    const sp = document.getElementById(`sp-${v}`);
+    if (sp) sp.setAttribute('d', mainSpiral);
+    const gr = document.getElementById(`gr-${v}`);
+    if (gr) gr.setAttribute('d', mainGrid);
+  });
+
+  // Populate tapered light spirals
+  const segs = taperedSegments(CX, CY, 1, T_MAX, 200);
+  ['sp-light-g','sp-light-trans-g'].forEach(id => {
+    const g = document.getElementById(id);
+    if (!g) return;
+    segs.forEach(({ d, sw }) => {
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', d);
+      p.setAttribute('fill', 'none');
+      p.setAttribute('stroke', '#7A5018');
+      p.setAttribute('stroke-width', sw);
+      p.setAttribute('stroke-linecap', 'butt');
+      p.setAttribute('stroke-linejoin', 'round');
+      g.appendChild(p);
+    });
+  });
+
+  // Build drafting grids
+  buildGrid(document.getElementById('gr-light'));
+  buildGrid(document.getElementById('gr-light-trans'));
+
+  // Wordmark spiral
+  const WM_CX = 62, WM_CY = 104;
+  document.getElementById('sp-wm').setAttribute('d',
+    spiralPath(WM_CX, WM_CY, 0.42, T_MAX));
+
+  // Download as 3× PNG
+  window.dl = function (id, filename) {
+    const svgEl = document.getElementById(id);
+    const ser   = new XMLSerializer();
+    const svgStr = ser.serializeToString(svgEl);
+    const vb  = svgEl.getAttribute('viewBox').split(' ').map(Number);
+    const W   = vb[2], H = vb[3], scale = 3;
+    const canvas = document.createElement('canvas');
+    canvas.width = W * scale; canvas.height = H * scale;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(scale, scale);
+    const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+    const url  = URL.createObjectURL(blob);
+    const img  = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0, W, H);
+      URL.revokeObjectURL(url);
+      const a = Object.assign(document.createElement('a'),
+        { href: canvas.toDataURL('image/png'), download: filename });
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    };
+    img.src = url;
+  };
+
+})();
+</script>
+</body>
+</html>
