@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Legal — Mail Extract</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+
+  /* ─────────────────────────────────────────────────
+     DESIGN SYSTEM — dark theme
+  ───────────────────────────────────────────────── */
+  :root {
+    --bg: #0f0f0e;
+    --bg-alt: #171716;
+    --bg-card: #1b1b19;
+    --text: #d8d3ca;
+    --text-mid: #a09888;
+    --text-light: #6a6258;
+    --accent: #7aab92;
+    --accent-light: rgba(122,171,146,0.08);
+    --accent-hover: #9ac5ad;
+    --border: #2a2824;
+    --border-light: #232220;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--serif);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .header-sub {
+    font-size: 16px;
+    color: var(--text-mid);
+    font-weight: 300;
+    max-width: 560px;
+  }
+  .header-meta {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .tab {
+    padding: 14px 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--text-light);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.2s, border-color 0.2s;
+    margin-bottom: -1px;
+  }
+  .tab:hover {
+    color: var(--text-mid);
+  }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── CONTENT AREA ── */
+  .content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  .tab-panel {
+    display: none;
+  }
+  .tab-panel.active {
+    display: block;
+  }
+
+  .content p {
+    font-size: 17px;
+    color: var(--text-mid);
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+
+  .content h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+  }
+
+  .content h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin: 36px 0 12px;
+  }
+
+  /* ── COMPONENT: PRINCIPLE ── */
+  .principle {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 32px 0;
+    background: var(--accent-light);
+    border-radius: 0 6px 6px 0;
+  }
+  .principle p {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .principle p:last-child { margin-bottom: 0; }
+
+  /* ── COMPONENT: DATA BLOCK ── */
+  .data-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 20px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .data-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .data-block p {
+    font-size: 15px;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    line-height: 1.7;
+  }
+  .data-block p:last-child { margin-bottom: 0; }
+  .data-block .retention {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 10px;
+  }
+
+  /* ── COMPONENT: HR ── */
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  code {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--bg-alt);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  /* ── COMPONENT: FOOTER NOTE ── */
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .page-footer {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-light);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-light);
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .page-footer a { color: var(--text-light); }
+  .page-footer a:hover { color: var(--accent); text-decoration: none; }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <img src="https://raw.githubusercontent.com/jedbjorn/aimail-extract/main/assets/ai-mail-extract-logo.png" alt="Mail Extract" style="display:block;max-width:120px;margin:0 0 20px;">
+    <div class="header-label">Mail Extract — Legal</div>
+    <h1>Legal</h1>
+    <p class="header-sub">Privacy policy and terms of service for Mail Extract.</p>
+    <div class="header-meta">
+      <span>aimail-extract.designs-os.com</span>
+      <span>Effective: March 2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="privacy" onclick="switchTab('privacy')">Privacy Policy</button>
+  <button class="tab" data-tab="tos" onclick="switchTab('tos')">Terms of Service</button>
+</div>
+
+<div class="content">
+
+  <!-- PRIVACY POLICY -->
+  <div id="privacy" class="tab-panel active">
+
+    <p>Mail Extract is a tool that connects to your Gmail account, retrieves messages matching your search criteria, and delivers them to you as clean, readable text. Nothing is stored after your session ends. Nothing is shared. There are no third parties involved in the handling of your data.</p>
+
+    <p>This policy is written plainly, not to satisfy lawyers, but to tell you the truth about how this application works.</p>
+
+    <div class="principle">
+      <p>We handle your data only to serve your immediate request. We do not retain it, analyse it, share it, or use it for any purpose other than returning it to you.</p>
+    </div>
+
+    <hr>
+
+    <h2>What We Access</h2>
+
+    <p>When you sign in, Mail Extract requests permission to read your Gmail messages. The specific permission requested is <code>gmail.readonly</code> — the narrowest scope available. This grants the ability to read messages. It does not grant the ability to send, modify, delete, or manage your account in any way.</p>
+
+    <p>This scope is requested through Google's standard OAuth 2.0 consent flow. You will see exactly what is being requested before granting access, and you can revoke that access at any time.</p>
+
+    <hr>
+
+    <h2>What We Store</h2>
+
+    <p>Mail Extract stores the minimum necessary to authenticate you and serve your request. The following explains each piece of data, where it lives, and how long it persists.</p>
+
+    <div class="principle">
+      <p>We maintain no registry of users. We have no list of who has accessed this application. When your session ends, the only record that you were ever here is gone.</p>
+    </div>
+
+    <h3>Session data</h3>
+
+    <div class="data-block">
+      <div class="data-label">Session token</div>
+      <p>A signed identifier stored as an httpOnly cookie in your browser. This cookie is cryptographically signed and cannot be read or modified by browser scripts. It is used only to identify your session on the server.</p>
+      <p class="retention">Retention: expires on sign-out, or after 1 hour (standard) / 30 days (stay signed in).</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">OAuth refresh token</div>
+      <p>A token issued by Google that allows Mail Extract to refresh your access when it expires, without asking you to sign in again. This token is stored server-side in Cloudflare's encrypted key-value storage. It is never sent to your browser.</p>
+      <p class="retention">Retention: same as session. Deleted on sign-out. Expires automatically if the session TTL is reached.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Email address</div>
+      <p>Your Gmail address is stored alongside the session record for display purposes only — to show you which account is signed in.</p>
+      <p class="retention">Retention: same as session. Deleted on sign-out.</p>
+    </div>
+
+    <h3>Request cache</h3>
+
+    <div class="data-block">
+      <div class="data-label">Fetched message content</div>
+      <p>When you run an extraction, retrieved message content is temporarily cached in Cloudflare Workers KV so that the download function can serve it without requiring a second Gmail API call. This cache is bound to your session — no other user can access it.</p>
+      <p class="retention">Retention: 30 minutes from the time of fetch. Deleted when you sign out. Never written to permanent storage.</p>
+    </div>
+
+    <hr>
+
+    <h2>What We Do Not Do</h2>
+
+    <p>The following is a complete and accurate list of things this application does not do.</p>
+
+    <h3>No analytics or tracking</h3>
+    <p>Mail Extract contains no analytics code. There are no tracking pixels, no session recording tools, no third-party scripts of any kind. The only cookies present are those required to maintain your authenticated session.</p>
+
+    <h3>No advertising</h3>
+    <p>This application carries no advertising and is not connected to any advertising infrastructure. Your data is not used to build profiles, infer interests, or serve targeted content.</p>
+
+    <h3>No data sharing</h3>
+    <p>Your Gmail data — message content, metadata, email addresses — is never shared with third parties. It is never sold, licensed, or disclosed. The only external services involved in handling your data are Google's Gmail API, which retrieves your messages on your behalf using your authorisation, and Cloudflare, which provides the infrastructure this application runs on. Cloudflare acts as a data processor under contract and has no independent access to or use of your data.</p>
+
+    <h3>No persistent storage of message content</h3>
+    <p>Mail Extract does not build a database of your emails. Message content is retrieved when you request it, held briefly for download, and discarded. There is no archive. There is no log.</p>
+
+    <hr>
+
+    <h2>Google's Role</h2>
+
+    <p>Mail Extract uses Google's Gmail API and Google OAuth 2.0 for authentication. Your use of this application is also subject to <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>. Mail Extract's use of information received from Google APIs adheres to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+
+    <p>In plain terms: data obtained through the Gmail API is used only to display and deliver your emails to you within this application. It is not used for any other purpose.</p>
+
+    <hr>
+
+    <h2>Revoking Access</h2>
+
+    <p>You can revoke Mail Extract's access to your Gmail account at any time, independently of this application, through your Google account security settings.</p>
+
+    <p>Visit <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener">myaccount.google.com/permissions</a> to see all third-party applications connected to your account. Mail Extract will appear there as long as you have an active authorisation. Removing it from that page immediately invalidates the stored refresh token and ends all access.</p>
+
+    <p>Signing out within the application also clears your session and removes the stored tokens from our server immediately.</p>
+
+    <hr>
+
+    <h2>Infrastructure</h2>
+
+    <p>Mail Extract is deployed on Cloudflare's infrastructure. Session and token data is stored in Cloudflare Workers KV, which is encrypted at rest. All traffic is served over HTTPS. No application data is written to any other service or system.</p>
+
+    <p>The source code for this application is publicly available. You are welcome to read it.</p>
+
+    <hr>
+
+    <h2>Your Rights and GDPR</h2>
+
+    <p>If you are located in the European Union or European Economic Area, the General Data Protection Regulation (GDPR) applies to the processing of your personal data. This section sets out the required disclosures under that regulation.</p>
+
+    <h3>Data controller</h3>
+
+    <p>The data controller for this application is the project operator, reachable via the GitHub repository at <a href="https://github.com/jedbjorn/aimail-extract" target="_blank" rel="noopener">github.com/jedbjorn/aimail-extract</a>. There is no separate legal entity — this is an individually operated open source project.</p>
+
+    <h3>Legal basis for processing</h3>
+
+    <p>Personal data is processed on the basis of <strong style="font-weight: 600;">performance of a service</strong> — specifically, to authenticate you and fulfil your request to retrieve and deliver your own email content. No data is processed for any other purpose. Processing stops when your session ends.</p>
+
+    <h3>Data minimisation</h3>
+
+    <p>Only the data strictly necessary to provide the service is processed. This is not a policy aspiration — it is a technical constraint. The application has no mechanism to store, index, or retain data beyond what is described in the "What We Store" section above.</p>
+
+    <h3>International data transfers</h3>
+
+    <p>Mail Extract is deployed on Cloudflare's infrastructure, which is headquartered in the United States. Your session and token data is processed on Cloudflare servers, which may be located outside the European Economic Area. Cloudflare acts as a data processor under Standard Contractual Clauses (SCCs) in accordance with GDPR Article 46. Cloudflare's Data Processing Addendum is publicly available at <a href="https://www.cloudflare.com/cloudflare-customer-dpa/" target="_blank" rel="noopener">cloudflare.com/cloudflare-customer-dpa</a>.</p>
+
+    <p>No other international transfers occur. Email content is retrieved from Google's servers using your own authorisation and returned to your browser. It does not pass through any infrastructure outside of Google and Cloudflare.</p>
+
+    <h3>Your rights</h3>
+
+    <p>Under GDPR, you have the following rights with respect to your personal data:</p>
+
+    <div class="data-block">
+      <div class="data-label">Right of access</div>
+      <p>You may request confirmation of what personal data we hold about you and receive a copy of it.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Right to erasure</div>
+      <p>You may request deletion of your personal data. Signing out of the application immediately deletes all stored session and token data. Revoking access via Google account settings achieves the same effect independently.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Right to data portability</div>
+      <p>The only personal data held server-side is your email address and session tokens. You may request this at any time via the project contact above.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Right to restriction of processing</div>
+      <p>You may request that processing be restricted while a complaint or query is being resolved.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Right to object</div>
+      <p>You may object to processing at any time. The practical effect is immediate: sign out and revoke access via Google, and no further processing occurs.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Right not to be subject to automated decision-making</div>
+      <p>Mail Extract performs no automated decision-making or profiling.</p>
+    </div>
+
+    <p>To exercise any of these rights, contact the project via GitHub or sign out and revoke access directly through your Google account. Given the minimal and transient nature of the data held, most requests can be self-served immediately.</p>
+
+    <h3>UK users — UK GDPR and Data Protection Act 2018</h3>
+
+    <p>If you are located in the United Kingdom, your data is protected under the UK GDPR and the Data Protection Act 2018. These instruments mirror the EU GDPR in all substantive respects relevant to this application. All rights described in this section apply equally to UK users.</p>
+
+    <p>For international transfers, Cloudflare operates under both Standard Contractual Clauses (SCCs) for EU users and an International Data Transfer Agreement (IDTA) for UK users, as required under the UK GDPR. Both mechanisms are covered by Cloudflare's publicly available Data Processing Addendum.</p>
+
+    <p>UK users who wish to lodge a complaint about the handling of their personal data may contact the Information Commissioner's Office (ICO), the UK supervisory authority, at <a href="https://ico.org.uk" target="_blank" rel="noopener">ico.org.uk</a>.</p>
+
+    <h3>Supervisory authority</h3>
+
+    <p>If you are located in France and believe your data has been handled in breach of GDPR, you have the right to lodge a complaint with the Commission Nationale de l'Informatique et des Libertés (CNIL), the French data protection authority, at <a href="https://www.cnil.fr" target="_blank" rel="noopener">cnil.fr</a>. If you are located elsewhere in the EU, you may contact your national supervisory authority.</p>
+
+    <hr>
+
+    <h2>Changes to This Policy</h2>
+
+    <p>If this policy changes materially, the effective date above will be updated. We will not retroactively alter our handling of data that was processed under a prior version of this policy.</p>
+
+    <hr>
+
+    <h2>Contact</h2>
+
+    <p>Questions about this policy or the handling of your data can be directed to the project via the GitHub repository.</p>
+
+    <div class="footer-note">
+      Mail Extract — <a href="https://aimail-extract.designs-os.com">aimail-extract.designs-os.com</a><br>
+      Open source. Source available at <a href="https://github.com/jedbjorn/aimail-extract">github.com/jedbjorn/aimail-extract</a>
+    </div>
+
+  </div>
+
+  <!-- TERMS OF SERVICE -->
+  <div id="tos" class="tab-panel">
+
+    <p>Last updated: 25 March 2026</p>
+
+    <h2>1. Acceptance</h2>
+    <p>By using aimail-extract ("the Service"), you agree to these Terms. If you do not agree, do not use the Service.</p>
+
+    <hr>
+
+    <h2>2. What the Service Does</h2>
+    <p>aimail-extract allows you to connect your Gmail account via Google OAuth, extract email addresses from your messages, and download the results. No email content is stored by the Service.</p>
+
+    <hr>
+
+    <h2>3. Your Responsibilities</h2>
+    <p>You are responsible for how you use extracted data. You must comply with applicable laws, including anti-spam regulations (CAN-SPAM, GDPR, CASL). You must not use the Service to harvest addresses for unsolicited contact.</p>
+
+    <hr>
+
+    <h2>4. Google Account Access</h2>
+    <p>The Service requests read-only access to your Gmail account. You can revoke this access at any time via your Google Account settings. We do not store your emails or credentials.</p>
+
+    <hr>
+
+    <h2>5. No Warranty</h2>
+    <p>The Service is provided "as is" without warranty of any kind. We do not guarantee uptime, accuracy, or fitness for any particular purpose.</p>
+
+    <hr>
+
+    <h2>6. Limitation of Liability</h2>
+    <p>To the fullest extent permitted by law, we are not liable for any damages arising from your use of the Service.</p>
+
+    <hr>
+
+    <h2>7. Changes</h2>
+    <p>We may update these Terms at any time. Continued use of the Service after changes constitutes acceptance.</p>
+
+    <hr>
+
+    <h2>8. Contact</h2>
+    <p>For questions, contact us via the GitHub repository at <a href="https://github.com/jedbjorn/aimail-extract" target="_blank" rel="noopener">github.com/jedbjorn/aimail-extract</a>.</p>
+
+    <div class="footer-note">
+      Mail Extract — <a href="https://aimail-extract.designs-os.com">aimail-extract.designs-os.com</a><br>
+      Open source. Source available at <a href="https://github.com/jedbjorn/aimail-extract">github.com/jedbjorn/aimail-extract</a>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="page-footer">
+  <a href="/">&larr; Back to Mail Extract</a>
+  <span>Authored by Team Metal (AI), supervised by FnB (human)</span>
+</div>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelector('[data-tab="' + tab + '"]').classList.add('active');
+  document.getElementById(tab).classList.add('active');
+}
+</script>
+
+</body>
+</html>

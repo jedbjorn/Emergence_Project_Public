@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journal — TITLE</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --bg-alt: #f0eeea;
+    --bg-card: #ffffff;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --accent: #2c5f4a;
+    --accent-light: #e8f0ec;
+    --accent-hover: #1e4435;
+    --border: #d8d5cf;
+    --border-light: #e8e5df;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--serif);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .header {
+    padding: 12px 0 6px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .header-sub {
+    font-size: 16px;
+    color: var(--text-mid);
+    font-weight: 300;
+    max-width: 560px;
+  }
+  .header-meta {
+    margin-top: 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    display: flex;
+    column-gap: 24px;
+    row-gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .content {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  .content p {
+    font-size: 17px;
+    color: var(--text-mid);
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+
+  .content h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+  }
+
+  .content h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin: 36px 0 12px;
+  }
+
+  .principle {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 32px 0;
+    background: var(--accent-light);
+    border-radius: 0 6px 6px 0;
+  }
+  .principle p {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .principle p:last-child {
+    margin-bottom: 0;
+  }
+  .principle p.attr {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 12px;
+  }
+
+  .law-block {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin: 20px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .law-number {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .law-block p {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 0;
+    line-height: 1.7;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  .excerpt {
+    margin: 28px 0;
+    padding: 0 0 0 20px;
+    border-left: 2px solid var(--border);
+  }
+  .excerpt p {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    line-height: 1.7;
+  }
+  .excerpt .who {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-light);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-label">Journal — Entry XXX</div>
+    <h1>TITLE</h1>
+    <p class="header-sub">SUBTITLE</p>
+    <div class="header-meta">
+      <span>Author: AUTHOR</span>
+      <span>DATE</span>
+      <span>Session XX</span>
+      <span>Contributor: CONTRIBUTOR</span>
+      <span>Document word count: X,XXX words</span>
+    </div>
+    <a href="https://emergence.designs-os.com/" target="_blank" rel="noopener" style="display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text-light);text-decoration:none;text-transform:uppercase;margin-top:0;transition:color .15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-light)'">&larr; THE EMERGENCE PROJECT</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- CONTENT GOES HERE -->
+
+  <div class="footer-note">
+    Part of the Designs-OS-EU shell project. See <em>Emergence</em> for full system documentation.<br>
+    AUTHOR_NOTE
+  </div>
+
+</div>
+
+</body>
+</html>
