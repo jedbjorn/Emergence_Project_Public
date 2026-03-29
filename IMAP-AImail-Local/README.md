@@ -38,7 +38,7 @@ cd Emergence_Project_Public/IMAP-AImail-Local
 npm install
 
 # Run
-node server.js
+node AImail.js
 ```
 
 ### Windows
@@ -51,7 +51,7 @@ git clone https://github.com/jedbjorn/Emergence_Project_Public.git
 cd Emergence_Project_Public\IMAP-AImail-Local
 npm install
 
-node server.js
+node AImail.js
 ```
 
 ### Linux
@@ -70,14 +70,14 @@ cd Emergence_Project_Public/IMAP-AImail-Local
 npm install
 
 # Run
-node server.js
+node AImail.js
 ```
 
 ---
 
 ## Usage
 
-1. Start the server: `node server.js`
+1. Start the server: `node AImail.js`
 2. Open your browser: **http://localhost:3000**
 3. Enter your Gmail address and app password
 4. Use the filters to search your email:
@@ -109,19 +109,19 @@ node server.js
 Example with a custom port:
 
 ```bash
-PORT=8080 node server.js
+PORT=8080 node AImail.js
 ```
 
 On Windows (PowerShell):
 
 ```powershell
-$env:PORT=8080; node server.js
+$env:PORT=8080; node AImail.js
 ```
 
 On Windows (Command Prompt):
 
 ```cmd
-set PORT=8080 && node server.js
+set PORT=8080 && node AImail.js
 ```
 
 ---
@@ -149,7 +149,7 @@ set PORT=8080 && node server.js
 - Gmail IMAP may be temporarily unavailable — try again in a moment
 
 **Port already in use**
-- Another process is using port 3000. Run with `PORT=3001 node server.js`
+- Another process is using port 3000. Run with `PORT=3001 node AImail.js`
 
 **No results found**
 - Try a wider date range
