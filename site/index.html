@@ -515,14 +515,13 @@
   .card-featured .app-info {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     height: 100%;
   }
 
   .card-featured h3 { margin-bottom: 0; }
   .card-featured p { margin-bottom: 0; }
   .card-featured .card-meta { margin-top: 0; }
-  .card-featured div[style*="margin-top"] { margin-top: 0 !important; }
 
   /* ── TEAM MEMBER ── */
   .member {
@@ -588,6 +587,174 @@
     background: var(--accent);
     color: white;
   }
+
+  /* ── DOCS PANEL ── */
+  #panel-docs .docs-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 0 60px;
+  }
+  #panel-docs .docs-wrap h1 {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  #panel-docs .docs-wrap h1 span {
+    font-size: 12px;
+    background: var(--border);
+    color: var(--text-light);
+    padding: 2px 8px;
+    border-radius: 10px;
+    vertical-align: middle;
+    margin-left: 8px;
+    letter-spacing: 0.5px;
+  }
+  #panel-docs .docs-subtitle {
+    color: var(--text-light);
+    font-size: 15px;
+    margin-bottom: 48px;
+  }
+  #panel-docs .docs-wrap h2 {
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 48px;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  #panel-docs .docs-wrap h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  #panel-docs .docs-wrap p { margin-bottom: 14px; font-size: 15px; }
+  #panel-docs .docs-wrap ol,
+  #panel-docs .docs-wrap ul { margin-bottom: 16px; padding-left: 24px; }
+  #panel-docs .docs-wrap li { font-size: 15px; margin-bottom: 8px; }
+  #panel-docs .docs-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  #panel-docs .docs-card-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-light);
+    margin-bottom: 12px;
+  }
+  #panel-docs .docs-note {
+    border-left: 3px solid #c8984a;
+    padding: 12px 16px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--text-mid);
+    background: rgba(200, 152, 74, 0.05);
+    border-radius: 0 6px 6px 0;
+  }
+  #panel-docs .docs-note strong { color: #c8984a; }
+  #panel-docs .docs-tip {
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    margin: 20px 0;
+    font-size: 14px;
+    color: var(--text-mid);
+    background: var(--accent-light);
+    border-radius: 0 6px 6px 0;
+  }
+  #panel-docs .docs-tip strong { color: var(--accent); }
+  #panel-docs code {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--border-light);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  #panel-docs .step-num {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    background: var(--accent);
+    color: white;
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 600;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  #panel-docs .steps { list-style: none; padding-left: 0; }
+  #panel-docs .steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 16px;
+  }
+  #panel-docs .steps li > div { padding-top: 2px; }
+  #panel-docs .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  #panel-docs .dot-green { background: #5eb87a; }
+  #panel-docs .dot-amber { background: #c8984a; }
+  #panel-docs .dot-red { background: #e06060; }
+  #panel-docs table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  #panel-docs th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-light);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  #panel-docs td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  #panel-docs .privacy-list { list-style: none; padding-left: 0; }
+  #panel-docs .privacy-list li { padding-left: 24px; position: relative; }
+  #panel-docs .privacy-list li::before {
+    content: '\2713';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-weight: bold;
+  }
+  #panel-docs .docs-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+  #panel-docs .docs-back {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+    margin-bottom: 32px;
+    cursor: pointer;
+  }
+  #panel-docs .docs-back:hover { color: var(--accent-hover); }
 
   /* ── PLACEHOLDER ── */
   .placeholder {
@@ -854,9 +1021,10 @@
         <div class="app-card card-featured">
           <div class="app-info">
             <h3>Mail Extract</h3>
-            <p>Connect your Gmail and extract addresses and body text as clean plain text — whether the original is typed or HTML. Everything else is stripped.</p>
-            <div style="margin-top: 20px;">
+            <p>Connect your Gmail and extract addresses and body text as clean plain text. Everything else is stripped.</p>
+            <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
               <a href="https://aimail.designs-os.com/" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Try it out →</a>
+              <a href="#docs" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;" onclick="showTab('docs', null)">Read the docs</a>
             </div>
           </div>
         </div>
@@ -988,6 +1156,166 @@
       </div>
     </div>
 
+    <!-- DOCS panel -->
+    <div class="panel" id="panel-docs">
+      <div class="docs-wrap">
+        <a class="docs-back" onclick="showTab('apps', document.querySelector('.nav-item[data-tab=&quot;apps&quot;]'))">← Back to Apps</a>
+
+        <h1>Mail Extract <span>beta</span></h1>
+        <p class="docs-subtitle">Extract emails as clean text. Feed to AI as context.</p>
+
+        <h2>What it does</h2>
+        <p>Mail Extract connects to your Gmail over IMAP and pulls email body text as clean plaintext — no HTML, no signatures, no reply chains. The output is ready to paste directly into an LLM as context.</p>
+
+        <h2>Before you start</h2>
+        <p>You need two things:</p>
+        <ol>
+          <li>A <strong>Gmail account</strong> with IMAP enabled (it's on by default)</li>
+          <li>A <strong>Google App Password</strong> — this is not your Gmail password</li>
+        </ol>
+
+        <div class="docs-card">
+          <div class="docs-card-label">Creating an App Password</div>
+          <ol>
+            <li>Go to <a href="https://myaccount.google.com/apppasswords" target="_blank">myaccount.google.com/apppasswords</a></li>
+            <li>You may need to enable 2-Step Verification first</li>
+            <li>Enter a name (e.g. "Mail Extract") and click Create</li>
+            <li>Google generates a 16-character password — copy it</li>
+            <li>Use this password to sign in to Mail Extract</li>
+          </ol>
+        </div>
+
+        <div class="docs-note">
+          <strong>Note:</strong> App passwords give access to your account. You can revoke yours at any time from the same Google page. We recommend revoking it when you're done extracting.
+        </div>
+
+        <h2>Signing in</h2>
+        <ol class="steps">
+          <li><span class="step-num">1</span><div>Enter your Gmail address</div></li>
+          <li><span class="step-num">2</span><div>Enter your app password (the 16-character code from Google, not your Gmail password)</div></li>
+          <li><span class="step-num">3</span><div>Click <strong>Sign in</strong> — the app connects to Gmail over IMAP to verify your credentials</div></li>
+        </ol>
+
+        <div class="docs-note">
+          <strong>Too many attempts?</strong> If sign-in fails multiple times, a cooldown timer will appear. Wait for the countdown to finish before trying again.
+        </div>
+
+        <h2>Using the app</h2>
+        <p>Once signed in, you'll see the extraction dashboard with your email and a green status indicator in the account bar.</p>
+
+        <h3>Choosing a folder</h3>
+        <p>Toggle between <strong>Inbox</strong> and <strong>All Mail</strong>. All Mail includes sent messages and archived conversations — useful for getting both sides of a thread.</p>
+
+        <h3>Filtering by sender</h3>
+        <p>Type an email address in the <strong>From</strong> field and press Enter to add it as a chip. You can add up to 4 addresses — the search uses OR logic, returning emails from any of them.</p>
+        <ul>
+          <li>Valid addresses show in green, invalid in red</li>
+          <li>Click the <strong>&times;</strong> on a chip to remove it</li>
+          <li>Leave the field empty to search all senders</li>
+        </ul>
+
+        <h3>Filtering by keyword</h3>
+        <p>The <strong>Contains</strong> field searches across subject lines and email bodies. It's case-insensitive and matches any substring.</p>
+        <p>When combined with sender addresses, the logic is <strong>AND</strong> — you get emails from any of your listed senders that also contain the keyword. For example, searching for <code>alice@</code> and <code>bob@</code> with keyword "invoice" returns: <strong>(alice OR bob) AND "invoice"</strong>.</p>
+
+        <div class="docs-tip">
+          <strong>Tip:</strong> Use keyword filtering to narrow a multi-address search. Leave the Contains field empty if you want everything from those senders.
+        </div>
+
+        <h3>Setting a date range</h3>
+        <p>Drag the handles on the timeline slider to set your start and end dates. The slider covers the last 24 months. The selected range is displayed above in full date format (e.g. "January 2025 → March 2026").</p>
+
+        <h3>Resetting filters</h3>
+        <p>Click <strong>reset</strong> to clear all filters and return to defaults.</p>
+
+        <h2>Extracting emails</h2>
+        <ol class="steps">
+          <li><span class="step-num">1</span><div>Set your filters (or leave them blank to search everything)</div></li>
+          <li><span class="step-num">2</span><div>Click <strong>Extract emails</strong></div></li>
+          <li><span class="step-num">3</span><div>Watch the progress bar and status indicator</div></li>
+          <li><span class="step-num">4</span><div>Results appear in a preview card below</div></li>
+        </ol>
+
+        <h3>Status indicators</h3>
+        <table>
+          <tr><th>Status</th><th>Meaning</th></tr>
+          <tr><td><span class="status-dot dot-amber"></span> searching...</td><td>Querying Gmail over IMAP</td></tr>
+          <tr><td><span class="status-dot dot-green"></span> N found</td><td>Extraction complete, results ready</td></tr>
+          <tr><td><span class="status-dot dot-amber"></span> N found &middot; address not found</td><td>Some senders returned results, others didn't</td></tr>
+          <tr><td><span class="status-dot dot-red"></span> not found</td><td>No results matched your filters</td></tr>
+        </table>
+
+        <h2>Reading results</h2>
+        <p>The results card shows a preview of the first 8 messages with date, sender, subject, and the first 300 characters of each body. If there are more than 8, you'll see "... and N more (all included in copy)".</p>
+        <p>Below the preview you'll find:</p>
+        <ul>
+          <li><strong>Email count</strong> — total messages extracted</li>
+          <li><strong>Character count</strong> — total characters across all bodies</li>
+          <li><strong>Estimated tokens</strong> — characters &divide; 4, a rough LLM token estimate</li>
+        </ul>
+        <p>If any sender addresses returned zero results, an amber bar lists them so you can double-check the spelling.</p>
+
+        <h2>Copying to clipboard</h2>
+        <p>Click <strong>Copy all</strong> to copy every extracted email to your clipboard. The copied text includes:</p>
+        <ul>
+          <li>A header with your account, search query, date range, and timestamp</li>
+          <li>All messages (not just the 8 previewed) with full headers and complete body text</li>
+          <li>Separator lines between each message</li>
+        </ul>
+        <p>Paste directly into ChatGPT, Claude, or any LLM as context.</p>
+
+        <hr class="docs-divider">
+
+        <h2>Limits</h2>
+        <table>
+          <tr><th>Limit</th><th>Value</th></tr>
+          <tr><td>Sender addresses per search</td><td>Up to 4</td></tr>
+          <tr><td>Messages per extraction</td><td>200</td></tr>
+          <tr><td>Extractions per hour</td><td>20</td></tr>
+          <tr><td>Keyword length</td><td>200 characters</td></tr>
+          <tr><td>Date range</td><td>Last 24 months</td></tr>
+          <tr><td>Session idle timeout</td><td>2 hours</td></tr>
+          <tr><td>Session hard limit</td><td>8 hours</td></tr>
+        </table>
+
+        <h2>Privacy &amp; security</h2>
+        <p>Mail Extract is designed so that your data never leaves your session.</p>
+        <ul class="privacy-list">
+          <li>No database — nothing is stored permanently</li>
+          <li>No disk writes — your credentials exist only in memory, encrypted</li>
+          <li>No tracking — no analytics, no third-party scripts</li>
+          <li>No history — extracted text lives in your clipboard, nowhere else</li>
+          <li>Sessions are destroyed on sign-out or timeout</li>
+          <li>Server restart clears all sessions</li>
+        </ul>
+
+        <div class="docs-tip">
+          <strong>Tip:</strong> For maximum security, revoke your app password from your Google account after you're done extracting. You can always create a new one next time.
+        </div>
+
+        <h2>Troubleshooting</h2>
+
+        <h3>Sign-in fails</h3>
+        <ul>
+          <li>Make sure you're using an <strong>app password</strong>, not your Gmail password</li>
+          <li>Check that IMAP is enabled: Gmail Settings → See all settings → Forwarding and POP/IMAP → Enable IMAP</li>
+          <li>If you see a cooldown timer, wait for it to finish before retrying</li>
+        </ul>
+
+        <h3>No results found</h3>
+        <ul>
+          <li>Double-check the sender email address for typos</li>
+          <li>Widen the date range using the timeline slider</li>
+          <li>Try switching from Inbox to All Mail — some messages may be archived</li>
+          <li>Remove keyword filters to rule out overly specific searches</li>
+        </ul>
+
+        <h3>Session expired</h3>
+        <p>Sessions time out after 2 hours of inactivity or 8 hours total. Sign in again to start a new session.</p>
+
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -1054,7 +1382,7 @@
   var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5'];
 
   function activateTab(tab) {
-    var validTabs = ['home', 'blog', 'apps', 'team', 'contact'];
+    var validTabs = ['home', 'blog', 'apps', 'team', 'contact', 'docs'];
     if (defined_blog_cards.indexOf(tab) !== -1) {
       goToBlogCard(tab);
       return;
