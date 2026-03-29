@@ -926,6 +926,7 @@
           <button class="nav-sub" data-blog="blog4" onclick="goToBlogCard('blog4')">Shells Grow&ensp;</button>
           <button class="nav-sub" data-blog="blog5" onclick="goToBlogCard('blog5')">The Catalyst&ensp;</button>
           <button class="nav-sub" data-blog="blog6" onclick="goToBlogCard('blog6')">Security Is a Posture&ensp;</button>
+          <button class="nav-sub" data-blog="blog7" onclick="goToBlogCard('blog7')">The Watcher and His Room&ensp;</button>
         </div>
       </div>
       <button class="nav-item" data-tab="apps" onclick="showTab('apps', this)">Apps</button>
@@ -1386,11 +1387,7 @@
       var blogFooter = document.getElementById('blog-footer');
       var blogFooterDoc = document.getElementById('blog-footer-doc');
       blogFooterDoc.innerHTML =
-        '<span>Author: ' + card.dataset.author + '</span><br>' +
-        '<span>Date: ' + card.dataset.date + '</span>' +
-        (card.dataset.session !== '—' ? ' · <span>Session: ' + card.dataset.session + '</span>' : '') + '<br>' +
-        '<span>Contributor words: ' + card.dataset.contribWords + '</span>' +
-        ' · <span>Document words: ' + card.dataset.docWords + '</span>';
+        '<span>Author: ' + card.dataset.author + '</span>';
       blogFooter.style.display = 'block';
     }
     if (location.hash !== '#' + cardId) {
