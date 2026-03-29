@@ -341,12 +341,12 @@ async function fetchMessagesForAddress(sid, email, password, folder, from, dateF
       const uids = await client.search(searchCriteria, { uid: true });
       if (!uids.length) {
         await client.logout();
-        return;
+        return results;
       }
 
-      const capped = uids.slice(0, limit || MAX_MESSAGES);
+      const limited = uids.slice(0, limit || MAX_MESSAGES);
 
-      for await (const msg of client.fetch(capped, {
+      for await (const msg of client.fetch(limited, {
         envelope: true,
         source:   true,
       }, { uid: true })) {

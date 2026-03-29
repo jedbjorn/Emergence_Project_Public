@@ -434,6 +434,7 @@ async function doFetch() {
   setFetchBtn('cancel');
   document.getElementById('results-card').style.display = 'none';
   document.getElementById('not-found-bar').style.display = 'none';
+  document.getElementById('capped-bar').style.display = 'none';
   showProg(5, 'contacting server\u2026');
 
   const prog = setInterval(() => {
