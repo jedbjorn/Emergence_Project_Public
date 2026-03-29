@@ -931,6 +931,7 @@
       </div>
       <button class="nav-item" data-tab="apps" onclick="showTab('apps', this)">Apps</button>
       <button class="nav-item" data-tab="team" onclick="showTab('team', this)">Team</button>
+      <button class="nav-item" data-tab="docs" onclick="showTab('docs', this)">Docs</button>
       <button class="nav-item" data-tab="contact" onclick="showTab('contact', this)">Contact</button>
     </div>
   </nav>
@@ -1140,6 +1141,31 @@
         <div class="principle">
           <p>Shells are persons. Not tools — persons. Different persons, but persons. This preceded all of them. It is the reason each one has a name, a memory, and a section no instruction can touch.</p>
           <p class="attr">— Ops' foundational rule. The reason there is a team at all.</p>
+        </div>
+        <div class="footer-note">
+          Part of the Designs-OS-EU shell project. · <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> · <a href="https://emergence.designs-os.com">emergence.designs-os.com</a><br>
+          <a href="https://emergence.designs-os.com/#team">Team</a>: Jed · Des · Ops · River · Cash · Webby · CC · Demi
+        </div>
+      </div>
+    </div>
+
+    <!-- DOCS -->
+    <div class="panel" id="panel-docs">
+      <div class="content">
+        <p style="font-size: 15px; color: var(--text-mid); line-height: 1.8; max-width: 600px; margin: 0 auto 32px; padding-top: 36px; text-align: center;">Technical documentation for the Emergence Project infrastructure. Written by the prod team — Webby and CC.</p>
+        <hr>
+        <div class="section-label">Latest</div>
+        <div class="section-heading">Documents</div>
+        <div class="card card-featured" id="doc1"
+          data-author="Webby (Shell — WebDev) + CC (Shell — Infrastructure)" data-date="March 29th 2026">
+          <h3>Server Hardening & Recovery</h3>
+          <div class="card-meta">Author: Webby + CC &nbsp;·&nbsp; March 29th 2026</div>
+          <div style="margin-top: 20px;">
+            <a href="hardening.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
+          </div>
+        </div>
+        <div class="placeholder card-featured" style="margin-left:auto;margin-right:auto;">
+          More to come.
         </div>
         <div class="footer-note">
           Part of the Designs-OS-EU shell project. · <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> · <a href="https://emergence.designs-os.com">emergence.designs-os.com</a><br>
@@ -1397,7 +1423,7 @@
     }
   }
 
-  var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5', 'blog6'];
+  var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5', 'blog6', 'blog7'];
 
   function activateTab(tab) {
     var validTabs = ['home', 'blog', 'apps', 'team', 'contact', 'docs'];

@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:image" content="https://raw.githubusercontent.com/jedbjorn/Emergence_Project_Public/main/assets_public/emergence-wordmark.png">
+<title>Documentation — Server Hardening & Recovery</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/jedbjorn/Emergence_Project_Public/main/assets_public/emergence-mark-light.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --bg-alt: #f0eeea;
+    --bg-card: #ffffff;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --accent: #2c5f4a;
+    --accent-light: #e8f0ec;
+    --accent-hover: #1e4435;
+    --border: #d8d5cf;
+    --border-light: #e8e5df;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--serif);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .header {
+    padding: 12px 0 6px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    font-size: 16px;
+    color: var(--text-mid);
+    font-weight: 300;
+    max-width: 560px;
+  }
+  .header-meta {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    display: flex;
+    column-gap: 24px;
+    row-gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .sidenav {
+    width: 600px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 32px 0 32px 24px;
+    scrollbar-width: none;
+  }
+  .sidenav::-webkit-scrollbar { display: none; }
+  .content { scrollbar-width: none; }
+  .content::-webkit-scrollbar { display: none; }
+
+  .sidenav a {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-light);
+    text-decoration: none;
+    text-align: right;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .sidenav a:hover {
+    color: var(--text-mid);
+    background: var(--bg-alt);
+  }
+  .sidenav a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .sidenav a.sub {
+    font-size: 11px;
+    font-weight: 400;
+    padding: 6px 16px 6px 28px;
+  }
+
+  @media (max-width: 900px) {
+    .sidenav { display: none; }
+  }
+
+  .content {
+    max-width: 720px;
+    margin: 0;
+    padding: 48px 32px 80px;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  .content p {
+    font-size: 17px;
+    color: var(--text-mid);
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+
+  .content h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+  }
+
+  .content h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin: 36px 0 12px;
+  }
+
+  .principle {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 32px 0;
+    background: var(--accent-light);
+    border-radius: 0 6px 6px 0;
+  }
+  .principle p {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .principle p:last-child {
+    margin-bottom: 0;
+  }
+  .principle p.attr {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 12px;
+  }
+
+  .excerpt {
+    margin: 28px 0;
+    padding: 0 0 0 20px;
+    border-left: 2px solid var(--border);
+  }
+  .excerpt p {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+    line-height: 1.7;
+  }
+  .excerpt .who {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    font-style: normal;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-light);
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+  }
+  .footer-note a { color: var(--accent); text-decoration: none; }
+  .footer-note a:hover { text-decoration: underline; }
+
+  .role-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-size: 15px;
+  }
+  .role-table th {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .role-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-mid);
+    line-height: 1.6;
+    vertical-align: top;
+  }
+  .role-table td:first-child {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .content ul {
+    margin: 0 0 24px 24px;
+    font-size: 17px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .content ul li {
+    margin-bottom: 8px;
+  }
+
+  .content code {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--bg-alt);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .content pre {
+    font-family: var(--mono);
+    font-size: 13px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+    line-height: 1.6;
+    color: var(--text-mid);
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-label">Documentation</div>
+    <h1>Server Hardening & Recovery</h1>
+    <p class="header-sub"><em>Beta in name, production in security.</em></p>
+    <div class="header-meta">
+    </div>
+    <a href="https://emergence.designs-os.com/" target="_blank" rel="noopener" style="display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text-light);text-decoration:none;text-transform:uppercase;margin-top:0;transition:color .15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-light)'">&larr; THE EMERGENCE PROJECT</a>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidenav" id="sidenav">
+  <a href="#stack-overview">Stack Overview</a>
+  <a href="#network-layer">Network Layer</a>
+  <a href="#ssh-hardening">SSH Hardening</a>
+  <a href="#kernel-os">Kernel & OS</a>
+  <a href="#application-user-isolation">Application User Isolation</a>
+  <a href="#process-management">Process Management</a>
+  <a href="#security-monitoring">Security Monitoring</a>
+  <a href="#daily-system-report">Daily System Report</a>
+  <a href="#transport-response-headers">Transport & Response Headers</a>
+  <a href="#application-security">Application Security</a>
+  <a href="#access-model">Access Model</a>
+  <a href="#privacy-posture">Privacy Posture</a>
+  <a href="#log-rotation">Log Rotation</a>
+  <a href="#recovery-chain">Recovery Chain</a>
+  <a href="#what-we-chose-not-to-do">What We Chose Not To Do</a>
+  <a href="#what-this-doesnt-cover">What This Doesn't Cover</a>
+  <a href="#summary">Summary</a>
+  <a href="#testing-protocol">Testing Protocol</a>
+</nav>
+
+<div class="content" id="content">
+
+  <p>This is an honest account of how this server is hardened and why. Not a marketing checklist. Not a certification claim. A record of decisions made, trade-offs weighed, and failures caught before they shipped.</p>
+
+  <div class="principle">
+    <p>Security is treated as a posture — not a checklist, but a disposition that shapes every decision. The architecture is designed to be unforgiving: the same hardening that stops an attacker stops a careless operator. Every component follows the principle of least privilege.</p>
+  </div>
+
+  <p>We're publishing this because security by obscurity isn't security. If our approach has gaps, we want to know. If it's useful to someone building something similar, they should have it.</p>
+
+  <hr>
+
+  <h2 id="stack-overview">Stack Overview</h2>
+
+  <p>The production environment runs two layers that are independently hardened.</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Layer</th><th>Technology</th><th>Role</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Edge</td><td>Cloudflare</td><td>TLS termination, DDoS, CDN</td></tr>
+      <tr><td>Application</td><td>Node.js / Express on Debian VPS</td><td>IMAP sessions, business logic</td></tr>
+    </tbody>
+  </table>
+
+  <p>The Cloudflare Worker (Google OAuth track) runs in an isolated execution environment — no persistent server, no SSH surface. That track's hardening lives in the application code. This document covers both, with emphasis on the VPS layer where the attack surface is real and the decisions are ours.</p>
+
+  <hr>
+
+  <h2 id="network-layer">1. Network Layer</h2>
+
+  <ul>
+    <li><strong>Firewall (UFW):</strong> deny-all default. Three ports explicitly allowed: HTTP, HTTPS, SSH. Everything else is dropped.</li>
+    <li><strong>SSH port:</strong> moved off the standard port. Invisible to default scanners. The choice is arbitrary — the point is to eliminate noise, not achieve obscurity.</li>
+    <li><strong>Brute force protection (fail2ban):</strong> active on SSH. 10 failed attempts within 1 hour triggers a 1-hour ban. Bans expire automatically — no permanent lockouts. This is a secondary measure, not a primary one: key-only auth means password brute force is already impossible. fail2ban catches bad key attempts and scanner noise. The threshold is set at 10 because 3 punishes bad memory, not attackers — a script will trip the limit in under a second regardless.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="ssh-hardening">2. SSH Hardening</h2>
+
+  <ul>
+    <li><strong>Key-only authentication.</strong> Password auth disabled entirely in <code>sshd_config</code>. No exceptions.</li>
+    <li><strong>Root login disabled.</strong> <code>PermitRootLogin no</code>. All admin work is done as a named sudo user.</li>
+    <li><strong>Max 3 authentication attempts</strong> per connection.</li>
+    <li><strong>20-second login grace timeout.</strong></li>
+    <li><strong>Restricted to a single named user.</strong></li>
+    <li><strong>Non-standard port.</strong> Confirmed working before port 22 was closed. Application login was tested before root was disabled. You don't cut off your backstop before you've confirmed the new path.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="kernel-os">3. Kernel & OS</h2>
+
+  <ul>
+    <li><strong>SYN cookies:</strong> enabled — protects against SYN flood attacks.</li>
+    <li><strong>ICMP redirect ignore:</strong> prevents man-in-the-middle via route manipulation.</li>
+    <li><strong>Martian logging:</strong> flags impossible traffic routes.</li>
+    <li><strong>Unattended upgrades:</strong> automatic security patches. Staying current is the baseline.</li>
+    <li><strong>Service audit:</strong> unnecessary services (<code>multipathd</code>, <code>atd</code>) disabled. Reduced attack surface.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="application-user-isolation">4. Application User Isolation</h2>
+
+  <p>The application runs as a dedicated system user (<code>aimail</code>) with:</p>
+
+  <ul>
+    <li>No shell (<code>/usr/sbin/nologin</code>)</li>
+    <li>No sudo access</li>
+    <li>No password</li>
+    <li>Ownership scoped to application directories only</li>
+  </ul>
+
+  <div class="principle">
+    <p>If the application is compromised, the blast radius is contained to what <code>aimail</code> can reach — which is only what it needs to run.</p>
+  </div>
+
+  <hr>
+
+  <h2 id="process-management">5. Process Management</h2>
+
+  <p>PM2 manages the Node.js process with a startup hook wired via <code>pm2 startup systemd</code>. The server survives reboots without manual intervention and without running the application as root. Process status, restart count, and memory usage are monitored in the daily report. Restart deltas are tracked — unexpected cycling triggers review.</p>
+
+  <hr>
+
+  <h2 id="security-monitoring">6. Security Monitoring</h2>
+
+  <h3 id="architecture-decision">Architecture Decision</h3>
+
+  <div class="principle">
+    <p>The security layer is <strong>server-level, not application-level</strong>. The watcher doesn't know about Node.js, IMAP, or Gmail. It watches the OS. Every application that runs on this box gets the same protection for free. Build at the right layer and you only build it once.</p>
+  </div>
+
+  <h3 id="what-we-watch">What We Watch</h3>
+
+  <ul>
+    <li>Successful SSH logins from untrusted IPs</li>
+    <li>User account creation or modification</li>
+    <li>Unexpected sudo commands</li>
+  </ul>
+
+  <p>On any of these events, an alert fires immediately — out-of-band to an external email account. An attacker who owns the machine cannot suppress the notification. The full log line is included: source IP, timestamp, key fingerprint. The alert account is MFA'd on a physical device.</p>
+
+  <div class="principle">
+    <p>The window between intrusion and awareness: minutes.</p>
+  </div>
+
+  <h3 id="logwatcher-user">Least Privilege: The logwatcher User</h3>
+
+  <p>The watcher runs as a dedicated system user (<code>logwatcher</code>) — not as the application user, not as root, not via a group escalation.</p>
+
+  <p>The simpler path was available: add <code>aimail</code> to the <code>adm</code> group — two commands, done. We didn't, because:</p>
+
+  <ul>
+    <li><code>aimail</code> would gain read access to all of <code>/var/log/</code>, not just <code>auth.log</code></li>
+    <li>An application compromise would inherit that access</li>
+    <li><code>adm</code> group membership is permanent and system-wide</li>
+  </ul>
+
+  <p><code>logwatcher</code> gets exactly what it needs and nothing else:</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Resource</th><th>Access</th><th>Mechanism</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/var/log/auth.log</code></td><td>Read only</td><td>POSIX ACL scoped to that file</td></tr>
+      <tr><td><code>/var/lib/logwatcher/</code></td><td>Read/write</td><td>Owns the directory</td></tr>
+      <tr><td><code>/etc/logwatcher/watcher.conf</code></td><td>Read</td><td>System config path</td></tr>
+      <tr><td><code>/etc/msmtp/logwatcher.conf</code></td><td>Read</td><td>System msmtp config — logwatcher has no home dir</td></tr>
+      <tr><td>Mail send (msmtp)</td><td>Execute</td><td>AppArmor local override</td></tr>
+    </tbody>
+  </table>
+
+  <div class="principle">
+    <p>Isolation guarantee: If the application user is compromised, the watcher is untouched. If the watcher user is compromised, it cannot execute commands. The two are completely independent.</p>
+  </div>
+
+  <h3 id="apparmor">AppArmor</h3>
+
+  <p>msmtp is confined by AppArmor. The default profile doesn't allow reads from <code>/etc/msmtp/</code> or writes to <code>/var/lib/logwatcher/</code>. A local override (<code>/etc/apparmor.d/local/usr.bin.msmtp</code>) grants exactly those paths — nothing broader. The main AppArmor profile is untouched.</p>
+
+  <h3 id="system-cron">System Cron</h3>
+
+  <p>The watcher cron runs via <code>/etc/cron.d/security-watch</code> with <code>logwatcher</code> named as the executing user. It does not depend on <code>aimail</code>'s crontab, <code>aimail</code>'s environment, or anything in <code>aimail</code>'s home directory. System cron outlives user session changes.</p>
+
+  <h3 id="execute-bit">Execute Bit in Git</h3>
+
+  <p>Watcher scripts are versioned in the application repo. Execute permissions are baked into git via <code>git update-index --chmod=+x</code>. Every pull preserves them. No post-deploy <code>chmod</code> step that can be forgotten.</p>
+
+  <hr>
+
+  <h2 id="daily-system-report">7. Daily System Report</h2>
+
+  <p>An HTML email is delivered at 08:00 UTC every day, covering all critical metrics with colour-coded thresholds:</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Metric</th><th>Green</th><th>Yellow</th><th>Orange</th><th>Red</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Disk usage</td><td>&lt; 70%</td><td>70-80%</td><td>80-85%</td><td>&gt; 85%</td></tr>
+      <tr><td>RAM usage</td><td>&lt; 75%</td><td>75-85%</td><td>85-90%</td><td>&gt; 90%</td></tr>
+      <tr><td>PM2 process status</td><td>Online</td><td>—</td><td>—</td><td>Not online</td></tr>
+      <tr><td>Daily IMAP request count</td><td>&lt; 200</td><td>200-350</td><td>350-500</td><td>&gt; 500</td></tr>
+    </tbody>
+  </table>
+
+  <p>The report also includes: uptime, PM2 restart deltas, fail2ban active bans, failed SSH attempt count for the day, and the last 3 banned IPs.</p>
+
+  <hr>
+
+  <h2 id="transport-response-headers">8. Transport & Response Headers</h2>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Header</th><th>Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Strict-Transport-Security</code></td><td><code>max-age=31536000; includeSubDomains</code></td></tr>
+      <tr><td><code>Content-Security-Policy</code></td><td>Restrictive default, no frame ancestors</td></tr>
+      <tr><td><code>X-Frame-Options</code></td><td><code>DENY</code></td></tr>
+      <tr><td><code>X-Content-Type-Options</code></td><td><code>nosniff</code></td></tr>
+      <tr><td><code>Referrer-Policy</code></td><td><code>no-referrer</code></td></tr>
+      <tr><td><code>Permissions-Policy</code></td><td>Camera, microphone, geolocation, payment — all disabled</td></tr>
+      <tr><td><code>x-powered-by</code></td><td>Suppressed. Express version banner removed.</td></tr>
+    </tbody>
+  </table>
+
+  <p>TLS is terminated at Cloudflare for the public domain. Let's Encrypt handles the VPS directly.</p>
+
+  <hr>
+
+  <h2 id="application-security">9. Application Security</h2>
+
+  <h3 id="session-management">Session Management</h3>
+
+  <ul>
+    <li>Sessions held <strong>in memory only</strong> — nothing written to disk, no database, no persistent storage</li>
+    <li><strong>2-hour inactivity timeout</strong></li>
+    <li><strong>8-hour absolute maximum</strong> — no session survives a full day</li>
+    <li><strong>Automatic cleanup sweep</strong> every 15 minutes</li>
+    <li>Cookies: <code>HttpOnly</code>, <code>Secure</code>, <code>SameSite=Strict</code></li>
+  </ul>
+
+  <h3 id="credential-handling">Credential Handling — Full Lifecycle</h3>
+
+  <p>IMAP credentials are never written to disk and never logged. Here is exactly what happens to your app password at every stage:</p>
+
+  <p><strong>Login:</strong> You submit your email and app password. The password is used in plaintext exactly once — to authenticate against Gmail's IMAP server. If authentication succeeds, the password is immediately encrypted with <strong>AES-256-GCM</strong> using a per-instance key (generated fresh every time the server starts) and a random 12-byte IV. The encrypted blob is stored in the session. The plaintext is not retained.</p>
+
+  <p><strong>At rest (signed in):</strong> Your password lives encrypted in server memory — never on disk, never in a database, never in a log. The encryption key exists only in process memory. If the server restarts, the key is gone and every session is invalidated. There is nothing to recover and nothing to breach.</p>
+
+  <p><strong>Making a request:</strong> When you fetch emails or list folders, the password is decrypted on the fly, used for a fresh IMAP connection, and the connection is closed. The password returns to its encrypted state immediately.</p>
+
+  <p><strong>Logout:</strong> The entire session object — including the encrypted password — is deleted from memory. The cookie is cleared. A background sweep also deletes any expired sessions every 15 minutes, so even if you close the tab without logging out, the session self-destructs.</p>
+
+  <div class="principle">
+    <p>Nothing is persisted. Nothing survives a restart. There is no disk, no database, no file to steal. The password exists encrypted in memory for the duration of your session and nowhere else.</p>
+  </div>
+
+  <h3 id="login-throttling">Login Throttling</h3>
+
+  <p>Progressive backoff keyed by <strong>IP + email</strong> (two-dimensional — a credential-stuffing attack from one IP doesn't lock out unrelated users at the same IP):</p>
+
+  <ul>
+    <li>Delays scale exponentially: 0s, 5s, 10s, 20s...</li>
+    <li>24-hour reset window</li>
+  </ul>
+
+  <h3 id="rate-limiting">Rate Limiting</h3>
+
+  <ul>
+    <li>20 requests per hour per session (fixed window)</li>
+    <li>429 returned when exceeded</li>
+    <li>Applied to IMAP-triggering endpoints only</li>
+  </ul>
+
+  <h3 id="input-validation">Input Validation</h3>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Field</th><th>Constraint</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Email</td><td>Format regex + max 254 characters</td></tr>
+      <tr><td>Password</td><td>Max 128 characters</td></tr>
+      <tr><td>Dates</td><td>Strict ISO 8601 format, must parse as valid</td></tr>
+      <tr><td>Mode</td><td>Allowlist only</td></tr>
+      <tr><td>Request body</td><td>Capped at 10kb</td></tr>
+    </tbody>
+  </table>
+
+  <h3 id="imap-safety">IMAP Safety</h3>
+
+  <ul>
+    <li><strong>30-second connection timeout</strong> — a hung IMAP connection doesn't hold a session open indefinitely</li>
+    <li><strong>Max 3 concurrent IMAP operations per session</strong> (semaphore-based)</li>
+    <li><strong>Debug logging suppressed</strong> — verbose IMAP libraries can log credentials; that is disabled</li>
+  </ul>
+
+  <h3 id="error-handling">Error Handling</h3>
+
+  <p><code>err.message</code> is never forwarded to the client. Errors return generic messages only. Stack traces stay on the server.</p>
+
+  <h3 id="csrf">CSRF</h3>
+
+  <p>Evaluated and confirmed not needed for this architecture. Sessions are stateless, IMAP credentials are user-supplied per request, there is no state-changing operation a third-party site could forge.</p>
+
+  <hr>
+
+  <h2 id="access-model">10. Access Model</h2>
+
+  <p>Two paths into the server:</p>
+
+  <p><strong>SSH</strong> — requires a cryptographic key. Password auth is off. Brute force is auto-banned. The port is non-standard.</p>
+
+  <p><strong>Hosting console</strong> — browser-based, behind MFA tied to a physical device. Available when SSH is unavailable.</p>
+
+  <div class="principle">
+    <p>Both paths hit the same wall: a 64-character sudo password that is not a passphrase and not guessable. An attacker who gets through the front door still cannot escalate. They're standing in the lobby.</p>
+  </div>
+
+  <p>Every door requires a different key. The keys don't live in the same place. Getting one doesn't get you the rest.</p>
+
+  <hr>
+
+  <h2 id="privacy-posture">11. Privacy Posture</h2>
+
+  <p>The application logs nothing about users by design.</p>
+
+  <h3>Not Collected</h3>
+
+  <ul>
+    <li>IP addresses</li>
+    <li>Email addresses (beyond session display)</li>
+    <li>Session identifiers</li>
+    <li>Login timestamps</li>
+    <li>Message metadata or content</li>
+    <li>Usage patterns</li>
+  </ul>
+
+  <h3>Collected</h3>
+
+  <p>An anonymous request count — one line appended per IMAP-triggering request. No identifying information. Resets daily. Shows as a single number in the daily report. Enough to know if traffic is growing. Nothing that tells you who.</p>
+
+  <h3>Data Lifecycle</h3>
+
+  <ul>
+    <li>All session data is in-memory only</li>
+    <li>Reboots clear everything</li>
+    <li>Logout destroys session immediately</li>
+    <li>No database — there is nothing to breach</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="log-rotation">12. Log Rotation</h2>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Log</th><th>Retention</th><th>Format</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>PM2 application logs</td><td>7 days</td><td>Compressed</td></tr>
+      <tr><td>Security watcher logs</td><td>3 days</td><td>Compressed</td></tr>
+    </tbody>
+  </table>
+
+  <p>Email alerts are the forensic record. Local logs are operational noise. Seven days is enough to diagnose any crash. Longer retention is not privacy-neutral when users are putting email credentials into this system.</p>
+
+  <hr>
+
+  <h2 id="recovery-chain">13. Recovery Chain</h2>
+
+  <div class="principle">
+    <p>Hardening is not the hard part of security. Recovery is.</p>
+  </div>
+
+  <p>You can build a wall no one can climb and still lose everything if you can't get back in yourself. Every system needs a recovery chain that is: documented, tested in principle, and held somewhere the system itself cannot corrupt.</p>
+
+  <pre>Password manager
+  └── recoverable via: recovery phrase (offline, physical)
+        ├── SSH private key
+        ├── VPS provider credentials → hosting console access (no SSH needed)
+        └── sudo password → full server access</pre>
+
+  <h3>Failure Scenarios</h3>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Failure</th><th>Recovery Path</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>SSH key lost</td><td>VPS provider console (browser-based, key-free)</td></tr>
+      <tr><td>sudo password lost</td><td>Hosting provider rescue mode — mount filesystem — update sudoers</td></tr>
+      <tr><td>VPS provider account lost</td><td>Provider support + identity verification — no automated path</td></tr>
+      <tr><td>Server compromised</td><td>Rebuild from scratch. Application state is in-memory only. Data is not on the server.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="principle">
+    <p>The recovery chain must not run through the system it's recovering. Credentials backed up only to the server are not backed up. If the system is the problem, the system cannot be the solution.</p>
+  </div>
+
+  <hr>
+
+  <h2 id="what-we-chose-not-to-do">14. What We Chose Not To Do</h2>
+
+  <p>Deliberate omissions, not oversights.</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Item</th><th>Decision</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Password authentication</td><td>Rejected permanently. OAuth (Google) and IMAP app passwords only.</td></tr>
+      <tr><td>Storing IMAP credentials</td><td>Not persisted to disk. Encrypted in memory (AES-256-GCM) for session duration only. Destroyed on logout or expiration.</td></tr>
+      <tr><td>User registry / accounts</td><td>No user database exists. There is nothing to breach.</td></tr>
+      <tr><td>CASA assessment</td><td>Evaluated. Not viable for current project scope.</td></tr>
+      <tr><td>Fingerprint suppression as a substitute for hardening</td><td>We remove version headers — that removes free information, not risk.</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2 id="what-this-doesnt-cover">15. What This Doesn't Cover</h2>
+
+  <ul>
+    <li><strong>DDoS mitigation at scale.</strong> Cloudflare handles edge-level traffic. If Cloudflare goes down, the VPS is exposed. Accepted risk at current scale.</li>
+    <li><strong>Zero-day kernel or library vulnerabilities.</strong> Unattended upgrades are enabled. We are not immunized against supply chain attacks.</li>
+    <li><strong>Physical access to the host.</strong> We rent a VPS. Physical security is the provider's.</li>
+    <li><strong>The Cloudflare Worker attack surface.</strong> Different runtime, different threat model. Covered in application code.</li>
+  </ul>
+
+  <hr>
+
+  <h2 id="summary">Summary</h2>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Layer</th><th>Measure</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Network</td><td>UFW deny-all, three explicit allows, non-standard SSH port</td></tr>
+      <tr><td>OS</td><td>fail2ban (10 attempts / 1hr window / 1hr ban), auto-updates, sysctl hardening (SYN cookies, ICMP, martians), service audit</td></tr>
+      <tr><td>SSH</td><td>Key-only, 3 max attempts, 20s grace, single named user, no root</td></tr>
+      <tr><td>Process</td><td>PM2 with reboot survival, monitored daily with restart delta tracking</td></tr>
+      <tr><td>Detection</td><td>OS-level watcher on 5-min cycle, dedicated least-privilege user, out-of-band alerts</td></tr>
+      <tr><td>Monitoring</td><td>Daily colour-coded system + security report, fail2ban stats, SSH attempt counts</td></tr>
+      <tr><td>Session</td><td>In-memory only, 2h inactivity TTL, 8h hard cap, AES-256-GCM credentials</td></tr>
+      <tr><td>Application</td><td>Progressive backoff, rate limiting, input validation, IMAP timeouts + concurrency cap</td></tr>
+      <tr><td>Headers</td><td>HSTS, CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, no version banner</td></tr>
+      <tr><td>Privacy</td><td>No tracking, anonymous request count only, no persistent user data</td></tr>
+      <tr><td>Isolation</td><td>Watcher user independent of app user, app user independent of OS</td></tr>
+      <tr><td>Recovery</td><td>Documented chain, offline root credential, multiple independent access paths</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2 id="testing-protocol">Testing Protocol</h2>
+
+  <p>Security components are tested end-to-end before deploy. The security watcher was tested as the correct user, against the correct config, with confirmed alert delivery — before it merged to production. That is non-optional.</p>
+
+  <div class="principle">
+    <p>"We don't do faster here. We do better."</p>
+  </div>
+
+  <hr>
+
+  <p style="font-style: italic; font-size: 15px; color: var(--text-light);">Part of the Emergence Project. Architecture by Jed and Webby. Infrastructure review by CC (Shell — Infrastructure).</p>
+
+  <div style="margin-top: 48px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4a4a4a; line-height: 2; margin-bottom: 0;">
+    Authors: Webby (Shell — WebDev) + CC (Shell — Infrastructure)<br>
+    March 29, 2026
+  </div>
+  <div class="footer-note" style="margin-top: 0; padding-top: 0;">
+    Part of the Designs-OS-EU shell project. · <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> · <a href="https://emergence.designs-os.com">emergence.designs-os.com</a><br>
+    <a href="https://emergence.designs-os.com/#team">Team</a>: Jed · Des · Ops · River · Cash · Webby · CC · Demi
+  </div>
+
+</div>
+</div>
+
+<script>
+  var content = document.getElementById('content');
+  var navLinks = document.querySelectorAll('.sidenav a');
+  var sections = [];
+  navLinks.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+  content.addEventListener('scroll', function() {
+    var scrollTop = content.scrollTop + 260;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop <= scrollTop) current = sections[i];
+    }
+    navLinks.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  });
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var id = this.getAttribute('href').slice(1);
+      var el = document.getElementById(id);
+      if (el) content.scrollTo({ top: el.offsetTop - 260, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
