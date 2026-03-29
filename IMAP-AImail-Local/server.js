@@ -585,6 +585,7 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
         if (msgs.length === 0) {
           notFound.push(addr);
         } else {
+          if (msgs.length > maxMessages) { capped = true; msgs.length = maxMessages; }
           msgs.forEach(m => { if (!seen.has(m.uid)) { seen.add(m.uid); merged.push(m); } });
         }
       }
