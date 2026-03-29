@@ -1,0 +1,7 @@
+# The Watcher — runs every 5 minutes as logwatcher
+# Copy to /etc/cron.d/security-watch
+# chmod 644, chown root:root
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+*/5 * * * * logwatcher /usr/local/bin/watcher.sh

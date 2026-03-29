@@ -1,0 +1,20 @@
+# ── THE WATCHER — msmtp CONFIG ───────────────────────────────────────────────
+# Copy to /etc/msmtp/logwatcher.conf
+# chmod 600 (this file contains your app password)
+# chown root:logwatcher
+# Never commit this file.
+
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        /var/lib/logwatcher/msmtp.log
+
+account        logwatcher
+host           smtp.gmail.com
+port           587
+from           alerts@yourdomain.com
+user           alerts@yourdomain.com
+password       your-app-password-here
+
+account default : logwatcher

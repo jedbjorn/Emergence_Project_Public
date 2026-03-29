@@ -1,0 +1,32 @@
+# ── THE WATCHER — CONFIG ─────────────────────────────────────────────────────
+# Copy to /etc/logwatcher/watcher.conf
+# chmod 640, chown root:logwatcher
+# Never commit this file — it contains your alert email and trusted IPs.
+
+# ── ALERT EMAIL ───────────────────────────────────────────────────────────────
+# Where alerts go. Must be external — not hosted on this server.
+TO="you@yourdomain.com"
+
+# Sending address (must match your msmtp config)
+FROM="alerts@yourdomain.com"
+
+# ── SERVER IDENTITY ───────────────────────────────────────────────────────────
+# Used in email subject lines and footers.
+SERVER_NAME="my-server"
+SERVER_IP="0.0.0.0"
+
+# ── TRUSTED IPS ───────────────────────────────────────────────────────────────
+# Space-separated. SSH logins from these IPs will not trigger alerts.
+# Add your home IP, office IP, etc.
+# Leave empty to alert on ALL logins.
+TRUSTED_IPS="1.2.3.4 5.6.7.8"
+
+# ── PATHS ─────────────────────────────────────────────────────────────────────
+# Full path to security_alert.sh
+ALERT_SCRIPT="/usr/local/bin/security_alert.sh"
+
+# State file — tracks last processed line in auth.log
+STATE_FILE="/var/lib/logwatcher/watch.state"
+
+# Auth log to watch
+AUTH_LOG="/var/log/auth.log"
