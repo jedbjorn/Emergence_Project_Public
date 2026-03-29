@@ -281,17 +281,8 @@ function stripReplies(text) {
 function processBody(raw, folder, msgFromAddress, sessionEmail) {
   const text = extractText(raw);
 
-  // Determine if this is the signed-in user's own sent message
-  const isAllMail  = folder === '[Gmail]/All Mail';
-  const isOwnMsg   = msgFromAddress && sessionEmail &&
-                     msgFromAddress.toLowerCase() === sessionEmail.toLowerCase();
-
-  // For own messages in All Mail — they are the content, don't strip replies
-  // For everything else — strip replies then signatures
-  let result = text;
-  if (!(isAllMail && isOwnMsg)) {
-    result = stripReplies(result);
-  }
+  // Always strip quoted reply chains — show only the message body
+  let result = stripReplies(text);
   result = stripSignature(result);
 
   return cleanText(result);
@@ -338,13 +329,22 @@ async function fetchMessagesForAddress(sid, email, password, folder, from, dateF
       const searchCriteria = { since, before };
       if (from) searchCriteria.from = from;
 
-      const uids = await client.search(searchCriteria, { uid: true });
-      if (!uids.length) {
+      const fromUids = await client.search(searchCriteria, { uid: true });
+
+      // Also search replies (to:addr) when filtering by address
+      let allUids = fromUids;
+      if (from) {
+        const toUids = await client.search({ since, before, to: from }, { uid: true });
+        const seen = new Set(fromUids);
+        for (const uid of toUids) { if (!seen.has(uid)) allUids.push(uid); }
+      }
+
+      if (!allUids.length) {
         await client.logout();
         return results;
       }
 
-      const limited = uids.slice(0, limit || MAX_MESSAGES);
+      const limited = allUids.slice(0, limit || MAX_MESSAGES);
 
       for await (const msg of client.fetch(limited, {
         envelope: true,
@@ -677,7 +677,6 @@ app.listen(PORT, HOST, () => {
   console.log('  └' + '─'.repeat(w) + '┘');
   console.log('');
 
-  // Open default browser
   const { exec } = require('child_process');
   const cmd = process.platform === 'darwin' ? `open ${url}`
             : process.platform === 'win32'  ? `start ${url}`
