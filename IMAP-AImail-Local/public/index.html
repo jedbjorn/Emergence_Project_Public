@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mail Extract</title>
+<style>
+:root{--bg:#0c0c0c;--s1:#141414;--s2:#1c1c1c;--s3:#252525;--b1:#333333;--b2:#444444;--b3:#555555;--t1:#ede8df;--t2:#b8b0a8;--t3:#8a8480;--acc:#d4c9b4;--acc2:#a89880;--green:#5eb87a;--red:#e06060;--amber:#c8984a;--blue:#6a9fd8;--font:'SF Mono','Fira Mono','Courier New',monospace;--sans:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;--r:6px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:14px;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:0 0 80px;}
+a{color:var(--blue);text-decoration:none;}a:hover{text-decoration:underline;}
+.wrap{width:100%;max-width:500px;padding:0 20px;}
+header{padding:44px 20px 6px;width:100%;max-width:500px;display:flex;align-items:baseline;gap:10px;}
+header h1{font-family:var(--font);font-size:15px;font-weight:400;letter-spacing:.12em;color:var(--acc);}
+.pill{font-family:var(--font);font-size:9px;letter-spacing:.1em;color:var(--t3);border:1px solid var(--b2);padding:2px 7px;border-radius:3px;text-transform:uppercase;}
+.sub{font-family:var(--font);font-size:11px;color:var(--t3);padding:0 20px;width:100%;max-width:500px;margin-bottom:28px;}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);margin-bottom:14px;overflow:hidden;}
+.card-head{padding:10px 18px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;}
+.card-title{font-family:var(--font);font-size:9px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;}
+.card-body{padding:18px;}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field:last-child{margin-bottom:0;}
+label{font-family:var(--font);font-size:9px;letter-spacing:.12em;color:var(--t3);text-transform:uppercase;}
+input[type=email],input[type=password],input[type=text]{background:var(--s2);border:1px solid var(--b1);border-radius:4px;padding:8px 12px;font-family:var(--font);font-size:12px;color:var(--t1);outline:none;width:100%;transition:border-color .15s;}
+input:focus{border-color:var(--b3);}
+input::placeholder{color:var(--t3);}
+input.valid{border-color:var(--green);}
+input.error{border-color:var(--red);}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:var(--font);font-size:11px;letter-spacing:.06em;padding:8px 16px;border-radius:4px;border:1px solid var(--b2);background:transparent;color:var(--acc);cursor:pointer;transition:all .15s;text-transform:uppercase;width:100%;}
+.btn:hover{background:var(--s2);border-color:var(--b3);}
+.btn:active{transform:scale(.98);}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.btn-primary{background:var(--acc);color:#0c0c0c;border-color:var(--acc);}
+.btn-primary:hover:not(:disabled){background:var(--acc2);border-color:var(--acc2);}
+.btn-google{background:#1a73e8;color:#fff;border-color:#1a73e8;font-family:var(--sans);font-size:14px;letter-spacing:0;padding:10px 24px;gap:10px;border-radius:24px;max-width:250px;}
+.btn-google:hover{background:#1557b0;border-color:#1557b0;}
+.btn-google-wrap{display:flex;justify-content:center;}
+.divider{display:flex;align-items:center;gap:12px;margin:18px 0;}
+.divider-line{flex:1;height:1px;background:var(--b1);}
+.divider-text{font-family:var(--font);font-size:10px;color:var(--t3);}
+.err-bar{background:var(--s2);border:1px solid var(--red);border-radius:4px;padding:10px 14px;font-family:var(--font);font-size:11px;color:var(--red);margin-bottom:14px;display:none;line-height:1.6;}
+.helper{font-family:var(--font);font-size:10px;color:var(--t3);margin-top:10px;line-height:1.6;}
+.helper a{color:var(--t3);text-decoration:underline;}
+.helper a:hover{color:var(--acc2);}
+.pwd-wrap{overflow:hidden;max-height:0;opacity:0;transition:max-height .25s ease, opacity .2s ease;}
+.pwd-wrap.visible{max-height:120px;opacity:1;}
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>MAIL EXTRACT</h1>
+  <span class="pill">beta</span>
+</header>
+<p class="sub">extract emails as clean text &middot; feed to AI as context</p>
+
+<div class="wrap">
+
+  <a href="https://emergence.designs-os.com/" target="_blank" rel="noopener" style="display:inline-block;font-family:var(--font);font-size:10px;letter-spacing:.08em;color:var(--t3);text-decoration:none;text-transform:uppercase;margin-bottom:10px;transition:color .15s;" onmouseover="this.style.color='var(--amber)'" onmouseout="this.style.color='var(--t3)'">&larr; THE EMERGENCE PROJECT</a>
+
+  <div id="err-bar" class="err-bar"></div>
+
+  <!-- IMAP track -->
+  <div class="card">
+    <div class="card-head">
+      <span class="card-title">gmail + app password</span>
+      <a href="https://support.google.com/accounts/answer/185833?hl=en" target="_blank" rel="noopener"
+         style="font-family:var(--font);font-size:9px;letter-spacing:.14em;color:var(--t3);text-transform:uppercase;text-decoration:underline;transition:color .15s;"
+         onmouseover="this.style.color='var(--acc2)'" onmouseout="this.style.color='var(--t3)'">What is an App Password?</a>
+    </div>
+    <div class="card-body">
+
+      <div style="margin-bottom:14px;">
+        <label style="display:block;margin-bottom:5px;">Gmail address</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="email" id="email" placeholder="you@gmail.com" autocomplete="email" spellcheck="false" style="flex:1;">
+          <button id="email-arrow" onclick="validateEmail()"
+            style="flex-shrink:0;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--green);background:transparent;color:var(--green);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;"
+            onmouseover="this.style.background='var(--green)';this.style.color='#0c0c0c'"
+            onmouseout="this.style.background='transparent';this.style.color='var(--green)'">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="pwd-wrap" id="pwd-wrap">
+        <div class="field">
+          <label>App password</label>
+          <input type="password" id="password" placeholder="xxxx xxxx xxxx xxxx" autocomplete="current-password" maxlength="128">
+        </div>
+        <button class="btn btn-primary" id="submit-btn" disabled onclick="doLogin()">Sign in</button>
+        <p class="helper">
+          Gmail only. Requires an app password &mdash; not your Gmail password.<br>
+          <a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener">How to create an app password &#8599;</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Meet the Team -->
+  <div style="display:flex;justify-content:center;margin-bottom:14px;">
+    <a href="https://emergence.designs-os.com/" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:8px;font-family:var(--font);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--t1);background:var(--s2);border:1px solid var(--b2);border-radius:24px;padding:10px 22px;text-decoration:none;transition:background .15s,border-color .15s;">
+      💻 Meet the Team
+    </a>
+  </div>
+
+</div>
+
+<footer style="width:100%;max-width:500px;padding:24px 20px 0;display:flex;justify-content:center;align-items:center;gap:0;">
+  <a href="https://aimail-extract.designs-os.com/legal" target="_blank" rel="noopener" style="font-family:var(--font);font-size:10px;color:var(--t3);text-decoration:none;letter-spacing:.08em;text-transform:uppercase;">Legal</a>
+  <span style="font-family:var(--font);font-size:10px;color:var(--t3);">&nbsp; | &nbsp;</span>
+  <a href="https://github.com/jedbjorn/Emergence_Project_Public" target="_blank" rel="noopener" style="font-family:var(--font);font-size:10px;color:var(--t3);text-decoration:none;letter-spacing:.08em;">👾 Check out our Git</a>
+</footer>
+
+<script>
+const emailEl   = document.getElementById('email');
+const pwdEl     = document.getElementById('password');
+const pwdWrap   = document.getElementById('pwd-wrap');
+const submitBtn = document.getElementById('submit-btn');
+const errBar    = document.getElementById('err-bar');
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function isValidEmail(v) {
+  return EMAIL_RE.test(v.trim());
+}
+
+let countdownTimer = null;
+
+function showErr(msg, retryAfter) {
+  if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+  errBar.textContent = msg;
+  if (retryAfter && retryAfter > Date.now()) {
+    const br = document.createElement('br');
+    const strong = document.createElement('strong');
+    errBar.appendChild(br);
+    errBar.appendChild(strong);
+    const tick = () => {
+      const secs = Math.ceil((retryAfter - Date.now()) / 1000);
+      if (secs <= 0) {
+        clearInterval(countdownTimer);
+        countdownTimer = null;
+        strong.textContent = '';
+        br.remove();
+        return;
+      }
+      strong.textContent = 'Wait ' + secs + 's before next attempt';
+    };
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
+  errBar.style.display = 'block';
+}
+
+function hideErr() {
+  if (countdownTimer) { clearInterval(countdownTimer); countdownTimer = null; }
+  errBar.style.display = 'none';
+}
+
+function updateSubmit() {
+  submitBtn.disabled = !(isValidEmail(emailEl.value) && pwdEl.value.trim().length > 0);
+}
+
+function validateEmail() {
+  hideErr();
+  if (isValidEmail(emailEl.value)) {
+    emailEl.classList.add('valid');
+    emailEl.classList.remove('error');
+    pwdWrap.classList.add('visible');
+    setTimeout(() => pwdEl.focus(), 50);
+  } else {
+    emailEl.classList.remove('valid');
+    emailEl.classList.add('error');
+    showErr('Please enter a valid Gmail address.');
+  }
+}
+
+// Allow Enter on email field to trigger arrow
+emailEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter') validateEmail();
+});
+
+emailEl.addEventListener('input', () => {
+  hideErr();
+  emailEl.classList.remove('valid', 'error');
+});
+
+pwdEl.addEventListener('input', () => {
+  hideErr();
+  updateSubmit();
+});
+
+// Allow Enter key to submit from password field
+pwdEl.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !submitBtn.disabled) doLogin();
+});
+
+async function doLogin() {
+  hideErr();
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span>';
+
+  try {
+    const res = await fetch('/login', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body:    new URLSearchParams({
+        email:    emailEl.value.trim(),
+        password: pwdEl.value,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+      window.location.href = '/app';
+      return;
+    }
+
+    if (res.status === 429) {
+      showErr('Too many attempts.', data.retryAfter);
+    } else if (res.status === 401) {
+      showErr('Sign-in failed. Check your email and app password.', data.retryAfter);
+      pwdEl.value = '';
+    } else {
+      showErr('Invalid email or password format.');
+    }
+
+  } catch (_) {
+    showErr('Connection error. Please try again.');
+  }
+
+  submitBtn.innerHTML = 'Sign in';
+  updateSubmit();
+}
+</script>
+</body>
+</html>
