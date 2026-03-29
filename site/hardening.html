@@ -545,18 +545,20 @@
 
   <h3 id="credential-handling">Credential Handling — Full Lifecycle</h3>
 
-  <p>IMAP credentials are never written to disk and never logged. Here is exactly what happens to your app password at every stage:</p>
+  <p>IMAP credentials are never stored in plaintext and never logged. The system uses a <strong>split-key architecture</strong> — the encryption key and the encrypted data are stored in separate locations. Neither half is useful alone. Here is exactly what happens to your app password at every stage:</p>
 
-  <p><strong>Login:</strong> You submit your email and app password. The password is used in plaintext exactly once — to authenticate against Gmail's IMAP server. If authentication succeeds, the password is immediately encrypted with <strong>AES-256-GCM</strong> using a per-instance key (generated fresh every time the server starts) and a random 12-byte IV. The encrypted blob is stored in the session. The plaintext is not retained.</p>
+  <p><strong>Login:</strong> You submit your email and app password. The password is used in plaintext exactly once — to authenticate against Gmail's IMAP server. If authentication succeeds, the server generates a random 12-character session ID and a random 256-bit encryption key. The password is encrypted with <strong>AES-256-GCM</strong> using that key and a random 12-byte IV. The encrypted blob is written to a session file on disk (<code>/var/lib/aimail/sessions/</code>, chmod 700). The encryption key is sent to the browser in an HttpOnly, Secure, SameSite cookie. The plaintext password is not retained.</p>
 
-  <p><strong>At rest (signed in):</strong> Your password lives encrypted in server memory — never on disk, never in a database, never in a log. The encryption key exists only in process memory. If the server restarts, the key is gone and every session is invalidated. There is nothing to recover and nothing to breach.</p>
+  <p><strong>At rest (signed in):</strong> Your password lives encrypted on disk — but the key to decrypt it is in your browser cookie. The server holds no keys in memory. A disk breach yields encrypted blobs with no way to decrypt them. A cookie theft yields keys with no encrypted data to use them on. Both halves are required.</p>
 
-  <p><strong>Making a request:</strong> When you fetch emails or list folders, the password is decrypted on the fly, used for a fresh IMAP connection, and the connection is closed. The password returns to its encrypted state immediately.</p>
+  <p><strong>Making a request:</strong> Your browser sends the cookie (containing the key). The server reads the encrypted session file from disk, decrypts the password using the key from the cookie, opens an IMAP connection, and the connection is closed. The decrypted password goes out of scope immediately — it exists in memory only for the duration of a single API call.</p>
 
-  <p><strong>Logout:</strong> The entire session object — including the encrypted password — is deleted from memory. The cookie is cleared. A background sweep also deletes any expired sessions every 15 minutes, so even if you close the tab without logging out, the session self-destructs.</p>
+  <p><strong>Logout:</strong> The session file is deleted from disk. The cookie is cleared. A background sweep also deletes any expired session files every 15 minutes, so even if you close the tab without logging out, the file self-destructs.</p>
+
+  <p><strong>Session persistence:</strong> Users may opt in to "Stay signed in for 7 days." This extends the cookie lifetime and session hard cap. The encryption is identical — same AES-256-GCM, same split-key separation. The idle timeout (2 hours for standard sessions, 7 days for persistent) and hard cap ensure stale sessions are cleaned up. All session files are deleted after their expiry window regardless of the persist setting.</p>
 
   <div class="principle">
-    <p>Nothing is persisted. Nothing survives a restart. There is no disk, no database, no file to steal. The password exists encrypted in memory for the duration of your session and nowhere else.</p>
+    <p>Split-key design: the encrypted credentials on disk are useless without the key in your browser. The key in your browser is useless without the encrypted file on disk. A server memory dump reveals nothing — no keys, no plaintext. Both halves must be compromised simultaneously for credential exposure.</p>
   </div>
 
   <h3 id="login-throttling">Login Throttling</h3>
@@ -647,10 +649,12 @@
   <h3>Data Lifecycle</h3>
 
   <ul>
-    <li>All session data is in-memory only</li>
-    <li>Reboots clear everything</li>
-    <li>Logout destroys session immediately</li>
-    <li>No database — there is nothing to breach</li>
+    <li>Encrypted credentials stored on disk — keys stored only in browser cookies</li>
+    <li>Standard sessions: 2h idle timeout, 8h hard cap</li>
+    <li>Persistent sessions: 7-day idle timeout, 7-day hard cap</li>
+    <li>Sweep runs every 15 minutes — expired session files deleted from disk</li>
+    <li>Logout destroys session file and cookie immediately</li>
+    <li>No database — session files are standalone JSON, deleted individually</li>
   </ul>
 
   <hr>
@@ -695,7 +699,7 @@
       <tr><td>SSH key lost</td><td>VPS provider console (browser-based, key-free)</td></tr>
       <tr><td>sudo password lost</td><td>Hosting provider rescue mode — mount filesystem — update sudoers</td></tr>
       <tr><td>VPS provider account lost</td><td>Provider support + identity verification — no automated path</td></tr>
-      <tr><td>Server compromised</td><td>Rebuild from scratch. Application state is in-memory only. Data is not on the server.</td></tr>
+      <tr><td>Server compromised</td><td>Rebuild from scratch. Session files on disk are encrypted (useless without browser-side keys). Delete session directory and redeploy.</td></tr>
     </tbody>
   </table>
 
@@ -715,7 +719,7 @@
     </thead>
     <tbody>
       <tr><td>Password authentication</td><td>Rejected permanently. OAuth (Google) and IMAP app passwords only.</td></tr>
-      <tr><td>Storing IMAP credentials</td><td>Not persisted to disk. Encrypted in memory (AES-256-GCM) for session duration only. Destroyed on logout or expiration.</td></tr>
+      <tr><td>Storing credentials in plaintext</td><td>Credentials encrypted on disk with AES-256-GCM. Encryption key held only in browser cookie (split-key). Neither half useful alone. Destroyed on logout or expiration.</td></tr>
       <tr><td>User registry / accounts</td><td>No user database exists. There is nothing to breach.</td></tr>
       <tr><td>CASA assessment</td><td>Evaluated. Not viable for current project scope.</td></tr>
       <tr><td>Fingerprint suppression as a substitute for hardening</td><td>We remove version headers — that removes free information, not risk.</td></tr>
@@ -748,7 +752,7 @@
       <tr><td>Process</td><td>PM2 with reboot survival, monitored daily with restart delta tracking</td></tr>
       <tr><td>Detection</td><td>OS-level watcher on 5-min cycle, dedicated least-privilege user, out-of-band alerts</td></tr>
       <tr><td>Monitoring</td><td>Daily colour-coded system + security report, fail2ban stats, SSH attempt counts</td></tr>
-      <tr><td>Session</td><td>In-memory only, 2h inactivity TTL, 8h hard cap, AES-256-GCM credentials</td></tr>
+      <tr><td>Session</td><td>Split-key: encrypted on disk, key in browser cookie. 2h/7d idle TTL, 8h/7d hard cap, AES-256-GCM</td></tr>
       <tr><td>Application</td><td>Progressive backoff, rate limiting, input validation, IMAP timeouts + concurrency cap</td></tr>
       <tr><td>Headers</td><td>HSTS, CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy, no version banner</td></tr>
       <tr><td>Privacy</td><td>No tracking, anonymous request count only, no persistent user data</td></tr>

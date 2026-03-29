@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Legal — Mail Extract</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/jedbjorn/Emergence_Project_Public/main/assets_public/emergence-mark-light.png">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 
@@ -300,30 +301,30 @@
 
     <h3>Session data</h3>
 
+    <p>Mail Extract uses a <strong>split-key architecture</strong>. Your credentials are encrypted and the encryption key is stored separately from the encrypted data. Neither half is useful without the other.</p>
+
     <div class="data-block">
-      <div class="data-label">Session token</div>
-      <p>A signed identifier stored as an httpOnly cookie in your browser. This cookie is cryptographically signed and cannot be read or modified by browser scripts. It is used only to identify your session on the server.</p>
-      <p class="retention">Retention: expires on sign-out, or after 1 hour (standard) / 30 days (stay signed in).</p>
+      <div class="data-label">Session cookie</div>
+      <p>An HttpOnly, Secure cookie containing your session identifier and encryption key. The cookie cannot be read or modified by browser scripts. The encryption key in this cookie is the only way to decrypt the credentials stored on the server — the server itself does not retain a copy of the key.</p>
+      <p class="retention">Retention: expires on sign-out, on browser close (standard), or after 7 days (stay signed in).</p>
     </div>
 
     <div class="data-block">
-      <div class="data-label">OAuth refresh token</div>
-      <p>A token issued by Google that allows Mail Extract to refresh your access when it expires, without asking you to sign in again. This token is stored server-side in Cloudflare's encrypted key-value storage. It is never sent to your browser.</p>
-      <p class="retention">Retention: same as session. Deleted on sign-out. Expires automatically if the session TTL is reached.</p>
+      <div class="data-label">Encrypted credentials (IMAP track)</div>
+      <p>Your app password is encrypted with AES-256-GCM using the key from your browser cookie and a random 12-byte IV. The encrypted blob is stored in a session file on the server. Without the key (which only exists in your cookie), the file is unreadable. The plaintext password is never written to disk and never logged.</p>
+      <p class="retention">Retention: same as session. Deleted on sign-out. Expired files cleaned every 15 minutes.</p>
+    </div>
+
+    <div class="data-block">
+      <div class="data-label">Encrypted credentials (OAuth track)</div>
+      <p>Your Google OAuth access and refresh tokens are encrypted with AES-256-GCM using the same split-key approach. The encrypted blob is stored in a session file on the server. The tokens are never sent to your browser in plaintext.</p>
+      <p class="retention">Retention: same as session. Deleted on sign-out. Expired files cleaned every 15 minutes.</p>
     </div>
 
     <div class="data-block">
       <div class="data-label">Email address</div>
       <p>Your Gmail address is stored alongside the session record for display purposes only — to show you which account is signed in.</p>
       <p class="retention">Retention: same as session. Deleted on sign-out.</p>
-    </div>
-
-    <h3>Request cache</h3>
-
-    <div class="data-block">
-      <div class="data-label">Fetched message content</div>
-      <p>When you run an extraction, retrieved message content is temporarily cached in Cloudflare Workers KV so that the download function can serve it without requiring a second Gmail API call. This cache is bound to your session — no other user can access it.</p>
-      <p class="retention">Retention: 30 minutes from the time of fetch. Deleted when you sign out. Never written to permanent storage.</p>
     </div>
 
     <hr>
@@ -366,7 +367,7 @@
 
     <h2>Infrastructure</h2>
 
-    <p>Mail Extract is deployed on Cloudflare's infrastructure. Session and token data is stored in Cloudflare Workers KV, which is encrypted at rest. All traffic is served over HTTPS. No application data is written to any other service or system.</p>
+    <p>Mail Extract runs on a dedicated VPS (Hetzner, EU) behind Caddy (TLS termination) and Cloudflare (DNS, DDoS protection). Encrypted session files are stored on the server's local disk in a restricted directory (owner-only access). Encryption keys exist only in browser cookies — the server holds no decryption keys in memory or on disk. All traffic is served over HTTPS. No application data is written to any external service or system.</p>
 
     <p>The source code for this application is publicly available. You are welcome to read it.</p>
 
@@ -378,7 +379,7 @@
 
     <h3>Data controller</h3>
 
-    <p>The data controller for this application is the project operator, reachable via the GitHub repository at <a href="https://github.com/jedbjorn/aimail-extract" target="_blank" rel="noopener">github.com/jedbjorn/aimail-extract</a>. There is no separate legal entity — this is an individually operated open source project.</p>
+    <p>The data controller for this application is the project operator, reachable via the GitHub repository at <a href="https://github.com/jedbjorn/Emergence_Project_Public" target="_blank" rel="noopener">github.com/jedbjorn/Emergence_Project_Public</a>. There is no separate legal entity — this is an individually operated project.</p>
 
     <h3>Legal basis for processing</h3>
 
@@ -456,7 +457,7 @@
 
     <div class="footer-note">
       Mail Extract — <a href="https://aimail-extract.designs-os.com">aimail-extract.designs-os.com</a><br>
-      Open source. Source available at <a href="https://github.com/jedbjorn/aimail-extract">github.com/jedbjorn/aimail-extract</a>
+      Project repository at <a href="https://github.com/jedbjorn/Emergence_Project_Public">github.com/jedbjorn/Emergence_Project_Public</a>
     </div>
 
   </div>
@@ -502,11 +503,11 @@
     <hr>
 
     <h2>8. Contact</h2>
-    <p>For questions, contact us via the GitHub repository at <a href="https://github.com/jedbjorn/aimail-extract" target="_blank" rel="noopener">github.com/jedbjorn/aimail-extract</a>.</p>
+    <p>For questions, contact us via the GitHub repository at <a href="https://github.com/jedbjorn/Emergence_Project_Public" target="_blank" rel="noopener">github.com/jedbjorn/Emergence_Project_Public</a>.</p>
 
     <div class="footer-note">
       Mail Extract — <a href="https://aimail-extract.designs-os.com">aimail-extract.designs-os.com</a><br>
-      Open source. Source available at <a href="https://github.com/jedbjorn/aimail-extract">github.com/jedbjorn/aimail-extract</a>
+      Project repository at <a href="https://github.com/jedbjorn/Emergence_Project_Public">github.com/jedbjorn/Emergence_Project_Public</a>
     </div>
 
   </div>
@@ -515,7 +516,7 @@
 
 <div class="page-footer">
   <a href="/">&larr; Back to Mail Extract</a>
-  <span>Authored by Team Metal (AI), supervised by FnB (human)</span>
+  <span>Team: Jed · Des · Ops · River · Cash · Webby · CC</span>
 </div>
 
 <script>
