@@ -3,9 +3,10 @@
 const crypto         = require('crypto');
 const express        = require('express');
 const { ImapFlow }   = require('imapflow');
-const { v4: uuidv4 } = require('uuid');
+// uuid no longer needed — session IDs generated via crypto.randomBytes
 const { simpleParser } = require('mailparser');
 const path           = require('path');
+const fs             = require('fs');
 
 const app   = express();
 const PORT  = process.env.PORT || 3000;
@@ -24,15 +25,18 @@ const ATTEMPT_RESET_MS  = 24 * 60 * 60 * 1000;
 const BASE_DELAY_MS     = 5000;
 const SESSION_TTL_MS      = 2 * 60 * 60 * 1000;   // 2 hours of inactivity
 const SESSION_MAX_AGE_MS  = 28_800_000;            // 8 hours hard cap
+const PERSIST_MAX_AGE_MS  = 7 * 24 * 60 * 60 * 1000; // 7 days hard cap
 const SWEEP_INTERVAL_MS   = 15 * 60 * 1000;        // 15 minutes
 const IMAP_TIMEOUT_MS     = 60_000;                 // 60 seconds
 
-const SESSION_ENC_KEY = crypto.randomBytes(32);
+// ── DISK SESSIONS ─────────────────────────────────────────────────────────────
+const SESSIONS_DIR = process.env.SESSIONS_DIR || path.join(__dirname, 'sessions');
+fs.mkdirSync(SESSIONS_DIR, { recursive: true });
+fs.chmodSync(SESSIONS_DIR, 0o700);
 
-// ── STORES ────────────────────────────────────────────────────────────────────
-const sessions      = new Map();   // sid  → session object
-const loginAttempts = new Map();   // ip|email → { count, lastAttempt }
-const imapSemaphores = new Map();  // sid → { active, queue }
+// ── STORES (lightweight, RAM only) ───────────────────────────────────────────
+const loginAttempts  = new Map();   // ip|email → { count, lastAttempt }
+const imapSemaphores = new Map();   // sid → { active, queue }
 
 // ── MIDDLEWARE ────────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '20kb' }));
@@ -62,12 +66,33 @@ function parseCookies(req) {
   return out;
 }
 
-function getSession(req) {
-  const { [SESSION_COOKIE]: sid } = parseCookies(req);
-  if (!sid) return [null, null];
-  const session = sessions.get(sid);
-  if (!session) return [null, null];
-  return [sid, session];
+function generateSessionId() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const bytes = crypto.randomBytes(12);
+  return Array.from(bytes).map(b => chars[b % chars.length]).join('');
+}
+
+function parseSidCookie(req) {
+  const cookies = parseCookies(req);
+  const raw = cookies[SESSION_COOKIE];
+  if (!raw) return [null, null];
+  const dot = raw.indexOf('.');
+  if (dot === -1) return [null, null];
+  return [raw.slice(0, dot), raw.slice(dot + 1)];
+}
+
+function loadSession(id) {
+  try {
+    return JSON.parse(fs.readFileSync(path.join(SESSIONS_DIR, id + '.json'), 'utf8'));
+  } catch { return null; }
+}
+
+function saveSession(id, session) {
+  fs.writeFileSync(path.join(SESSIONS_DIR, id + '.json'), JSON.stringify(session));
+}
+
+function deleteSession(id) {
+  try { fs.unlinkSync(path.join(SESSIONS_DIR, id + '.json')); } catch {}
 }
 
 function makeClient(email, password) {
@@ -80,23 +105,19 @@ function makeClient(email, password) {
   });
 }
 
-function encryptPassword(plain) {
-  const iv  = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv('aes-256-gcm', SESSION_ENC_KEY, iv);
-  const ct  = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
-  const tag = cipher.getAuthTag();
+function encryptData(plain, keyHex) {
+  const iv     = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(keyHex, 'hex'), iv);
+  const ct     = Buffer.concat([cipher.update(plain, 'utf8'), cipher.final()]);
+  const tag    = cipher.getAuthTag();
   return { iv: iv.toString('hex'), ct: ct.toString('hex'), tag: tag.toString('hex') };
 }
 
-function decryptPassword(enc) {
+function decryptData(enc, keyHex) {
   const decipher = crypto.createDecipheriv(
-    'aes-256-gcm', SESSION_ENC_KEY, Buffer.from(enc.iv, 'hex'));
+    'aes-256-gcm', Buffer.from(keyHex, 'hex'), Buffer.from(enc.iv, 'hex'));
   decipher.setAuthTag(Buffer.from(enc.tag, 'hex'));
   return decipher.update(enc.ct, 'hex', 'utf8') + decipher.final('utf8');
-}
-
-function getSessionPassword(session) {
-  return decryptPassword(session.encPassword);
 }
 
 function withImapTimeout(fn, client) {
@@ -112,9 +133,10 @@ function withImapTimeout(fn, client) {
   });
 }
 
-function sessionCookie(sid) {
+function sessionCookie(id, keyHex, persist) {
   const secure = LOCAL ? '' : ' Secure;';
-  return `${SESSION_COOKIE}=${sid}; HttpOnly;${secure} SameSite=Strict; Path=/`;
+  const maxAge = persist ? ` Max-Age=${Math.floor(PERSIST_MAX_AGE_MS / 1000)};` : '';
+  return `${SESSION_COOKIE}=${id}.${keyHex}; HttpOnly;${secure} SameSite=Strict; Path=/;${maxAge}`;
 }
 
 function clearCookie() {
@@ -300,7 +322,7 @@ function releaseImap(sid) {
 }
 
 // ── BODY EXTRACTION ───────────────────────────────────────────────────────────
-async function fetchMessagesForAddress(sid, email, password, folder, from, dateFrom, dateTo, sessionEmail) {
+async function fetchMessagesForAddress(sid, email, password, folder, from, dateFrom, dateTo, sessionEmail, limit) {
   await acquireImap(sid);
   const client  = makeClient(email, password);
   const results = [];
@@ -322,7 +344,7 @@ async function fetchMessagesForAddress(sid, email, password, folder, from, dateF
         return;
       }
 
-      const capped = uids.slice(0, MAX_MESSAGES);
+      const capped = uids.slice(0, limit || MAX_MESSAGES);
 
       for await (const msg of client.fetch(capped, {
         envelope: true,
@@ -358,43 +380,60 @@ async function fetchMessagesForAddress(sid, email, password, folder, from, dateF
 
 // ── SESSION GATES ─────────────────────────────────────────────────────────────
 function isSessionExpired(session) {
-  const now = Date.now();
-  return now - session.lastActive > SESSION_TTL_MS ||
-         now - session.createdAt > SESSION_MAX_AGE_MS;
+  const now    = Date.now();
+  const ttl    = session.persist ? PERSIST_MAX_AGE_MS : SESSION_TTL_MS;
+  const maxAge = session.persist ? PERSIST_MAX_AGE_MS : SESSION_MAX_AGE_MS;
+  return now - session.lastActive > ttl ||
+         now - session.createdAt > maxAge;
 }
 
 function requireSession(req, res, next) {
-  const [sid, session] = getSession(req);
+  const [id, keyHex] = parseSidCookie(req);
+  if (!id || !keyHex) return res.redirect('/');
+  const session = loadSession(id);
   if (!session || isSessionExpired(session)) {
-    if (sid) sessions.delete(sid);
+    if (id) deleteSession(id);
     return res.redirect('/');
   }
   session.lastActive = Date.now();
+  saveSession(id, session);
   res.setHeader('Cache-Control', 'no-store');
-  req.session = session;
+  req.sessionId  = id;
+  req.sessionKey = keyHex;
+  req.session    = session;
   next();
 }
 
 function requireSessionApi(req, res, next) {
-  const [sid, session] = getSession(req);
+  const [id, keyHex] = parseSidCookie(req);
+  if (!id || !keyHex) return res.status(401).json({ ok: false, error: 'Unauthorised' });
+  const session = loadSession(id);
   if (!session || isSessionExpired(session)) {
-    if (sid) sessions.delete(sid);
+    if (id) deleteSession(id);
     return res.status(401).json({ ok: false, error: 'Unauthorised' });
   }
   session.lastActive = Date.now();
+  saveSession(id, session);
   res.setHeader('Cache-Control', 'no-store');
-  req.session = session;
+  req.sessionId  = id;
+  req.sessionKey = keyHex;
+  req.session    = session;
   next();
 }
 
 // ── ROUTES ────────────────────────────────────────────────────────────────────
-app.get('/', (_req, res) => {
+app.get('/', (req, res) => {
+  const [id, keyHex] = parseSidCookie(req);
+  if (id && keyHex) {
+    const session = loadSession(id);
+    if (session && !isSessionExpired(session)) return res.redirect('/app');
+  }
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.post('/login', async (req, res) => {
   const ip = req.ip;
-  const { email, password } = req.body;
+  const { email, password, persist } = req.body;
 
   // Input validation — fast fail
   if (!isValidEmail(email) || !password || typeof password !== 'string' || password.length > 128) {
@@ -434,19 +473,22 @@ app.post('/login', async (req, res) => {
   // Success — clear attempt counter, create session
   clearAttempts(attemptKey);
 
-  const sid = uuidv4();
-  const encPassword = encryptPassword(password);
-  sessions.set(sid, {
-    sid,
+  const id       = generateSessionId();
+  const keyHex   = crypto.randomBytes(32).toString('hex');
+  const isPersist = persist === '1';
+  const enc      = encryptData(password, keyHex);
+
+  saveSession(id, {
+    enc,
     email,
-    encPassword,      // AES-256-GCM encrypted, in-memory only
+    persist:     isPersist,
     createdAt:   Date.now(),
     lastActive:  Date.now(),
     fetchCount:  0,
     windowStart: Date.now(),
   });
 
-  res.setHeader('Set-Cookie', sessionCookie(sid));
+  res.setHeader('Set-Cookie', sessionCookie(id, keyHex, isPersist));
   res.json({ ok: true });
 });
 
@@ -460,7 +502,7 @@ app.get('/api/me', requireSessionApi, (req, res) => {
 
 app.get('/api/folders', requireSessionApi, async (req, res) => {
   const { email } = req.session;
-  const client = makeClient(email, getSessionPassword(req.session));
+  const client = makeClient(email, decryptData(req.session.enc, req.sessionKey));
   try {
     const folders = await withImapTimeout(async () => {
       await client.connect();
@@ -496,7 +538,8 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
     });
   }
 
-  const { folder, fromAddresses = [], contains = '', dateFrom, dateTo } = req.body;
+  const { folder, fromAddresses = [], contains = '', dateFrom, dateTo, maxMessages: rawMax } = req.body;
+  const maxMessages = Math.max(5, Math.min(200, parseInt(rawMax) || 50));
 
   if (!folder || typeof folder !== 'string' || folder.length > 100) {
     return res.status(400).json({ ok: false, error: 'Invalid request.' });
@@ -517,23 +560,27 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
   }
 
   session.fetchCount++;
+  saveSession(req.sessionId, session);
 
   try {
+    const password = decryptData(session.enc, req.sessionKey);
     const seen     = new Set();
     const merged   = [];
     const notFound = [];
+    let   capped   = false;
 
     if (fromAddresses.length === 0) {
       // No from filter — single search, no address tracking
       const msgs = await fetchMessagesForAddress(
-        session.sid, session.email, getSessionPassword(session), folder, null, dateFrom, dateTo, session.email
+        req.sessionId, session.email, password, folder, null, dateFrom, dateTo, session.email, maxMessages + 1
       );
+      if (msgs.length > maxMessages) { capped = true; msgs.length = maxMessages; }
       msgs.forEach(m => { if (!seen.has(m.uid)) { seen.add(m.uid); merged.push(m); } });
     } else {
       // One search per address — OR semantics, deduplicate by UID
       for (const addr of fromAddresses) {
         const msgs = await fetchMessagesForAddress(
-          session.sid, session.email, getSessionPassword(session), folder, addr, dateFrom, dateTo, session.email
+          req.sessionId, session.email, password, folder, addr, dateFrom, dateTo, session.email, maxMessages + 1
         );
         if (msgs.length === 0) {
           notFound.push(addr);
@@ -555,6 +602,9 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
     // Sort by date descending
     filtered.sort((a, b) => (b.date > a.date ? 1 : b.date < a.date ? -1 : 0));
 
+    // Cap and detect overflow
+    if (filtered.length > maxMessages) { capped = true; filtered.length = maxMessages; }
+
     // Strip uid from response — internal only
     const messages = filtered.map(({ uid: _uid, ...rest }) => rest);
 
@@ -565,7 +615,7 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
       return res.json({ ok: true, messages: [], notFound, hint });
     }
 
-    res.json({ ok: true, messages, notFound });
+    res.json({ ok: true, messages, notFound, capped });
   } catch (err) {
     if (err.message === 'IMAP_TIMEOUT') {
       return res.status(504).json({ ok: false, error: 'Mail server timed out. Please try again.' });
@@ -579,8 +629,8 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
 });
 
 app.post('/logout', (req, res) => {
-  const [sid] = getSession(req);
-  if (sid) sessions.delete(sid);
+  const [id] = parseSidCookie(req);
+  if (id) deleteSession(id);
   res.setHeader('Set-Cookie', clearCookie());
   res.json({ ok: true });
 });
@@ -588,13 +638,23 @@ app.post('/logout', (req, res) => {
 // ── CLEANUP SWEEP ──────────────────────────────────────────────────────────
 setInterval(() => {
   const now = Date.now();
-  for (const [sid, session] of sessions) {
-    if (now - session.lastActive > SESSION_TTL_MS ||
-        now - session.createdAt > SESSION_MAX_AGE_MS) {
-      sessions.delete(sid);
-      imapSemaphores.delete(sid);
+  try {
+    for (const file of fs.readdirSync(SESSIONS_DIR)) {
+      if (!file.endsWith('.json')) continue;
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(SESSIONS_DIR, file), 'utf8'));
+        const ttl    = data.persist ? PERSIST_MAX_AGE_MS : SESSION_TTL_MS;
+        const maxAge = data.persist ? PERSIST_MAX_AGE_MS : SESSION_MAX_AGE_MS;
+        if (now - data.lastActive > ttl || now - data.createdAt > maxAge) {
+          const id = file.slice(0, -5);
+          deleteSession(id);
+          imapSemaphores.delete(id);
+        }
+      } catch {
+        try { fs.unlinkSync(path.join(SESSIONS_DIR, file)); } catch {}
+      }
     }
-  }
+  } catch {}
   for (const [key, entry] of loginAttempts) {
     if (now - entry.lastAttempt > ATTEMPT_RESET_MS) loginAttempts.delete(key);
   }
@@ -603,5 +663,5 @@ setInterval(() => {
 // ── START ─────────────────────────────────────────────────────────────────────
 const HOST = '127.0.0.1';
 app.listen(PORT, HOST, () => {
-  console.log(`aimail-beta listening on ${HOST}:${PORT}${LOCAL ? ' (local mode)' : ''}`);
+  console.log(`aimail-beta listening on ${HOST}:${PORT} (local mode)`);
 });

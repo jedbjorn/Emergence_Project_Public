@@ -97,7 +97,15 @@ select option{background:var(--s2);}
 
   <!-- Filters -->
   <div class="card">
-    <div class="card-head"><span class="card-title">filters</span></div>
+    <div class="card-head">
+      <span class="card-title">filters</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <label style="margin:0;text-transform:none;letter-spacing:0;font-size:10px;">max</label>
+        <input type="number" id="max-msgs" value="50" min="5" max="200" step="10"
+          style="width:58px;background:var(--s2);border:1px solid var(--b1);border-radius:4px;padding:4px 6px;font-family:var(--font);font-size:11px;color:var(--green);text-align:center;outline:none;"
+          oninput="updateMaxColor()">
+      </div>
+    </div>
     <div class="card-body">
 
       <!-- Chip display — full width, above inputs -->
@@ -153,7 +161,7 @@ select option{background:var(--s2);}
       </div>
 
       <div class="row" style="margin-bottom:0;align-items:center;">
-        <button class="btn btn-primary" id="fetch-btn" onclick="doFetch()">Extract emails</button>
+        <button class="btn btn-primary" id="fetch-btn" onclick="handleFetchBtn()">Extract emails</button>
         <span class="dot" id="fetch-dot"></span>
         <span id="fetch-status" style="font-family:var(--font);font-size:11px;"></span>
       </div>
@@ -164,6 +172,7 @@ select option{background:var(--s2);}
   <div class="card" id="results-card" style="display:none;">
     <div class="card-head"><span class="card-title">results</span></div>
     <pre id="preview"></pre>
+    <div id="capped-bar" style="font-family:var(--font);font-size:10px;color:var(--green);padding:8px 18px;border-top:1px solid var(--b1);display:none;"></div>
     <div id="not-found-bar" class="not-found-bar"></div>
     <div class="result-footer">
       <div class="result-meta">
@@ -189,9 +198,17 @@ let fetchedMessages = [];
 let fetchedMeta     = {};
 let chips           = [];
 let selectedFolder  = '[Gmail]/All Mail';
+let fetching        = false;
+let fetchController = null;
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 function isValidEmail(v) { return EMAIL_RE.test(v.trim()); }
+
+function updateMaxColor() {
+  const el = document.getElementById('max-msgs');
+  const v = parseInt(el.value) || 50;
+  el.style.color = v <= 50 ? 'var(--green)' : v <= 100 ? 'var(--amber)' : 'var(--red)';
+}
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 async function init() {
@@ -367,7 +384,37 @@ function tlUp() {
 }
 
 // ── FETCH ─────────────────────────────────────────────────────────────────────
+function handleFetchBtn() {
+  if (fetching) { cancelFetch(); return; }
+  doFetch();
+}
+
+function setFetchBtn(mode) {
+  const btn = document.getElementById('fetch-btn');
+  if (mode === 'cancel') {
+    btn.textContent = 'Cancel';
+    btn.classList.remove('btn-primary');
+    btn.style.background = 'var(--red)';
+    btn.style.borderColor = 'var(--red)';
+    btn.style.color = '#fff';
+    btn.disabled = false;
+  } else {
+    btn.textContent = 'Extract emails';
+    btn.classList.add('btn-primary');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    btn.disabled = false;
+  }
+}
+
+function cancelFetch() {
+  if (fetchController) fetchController.abort();
+}
+
 async function doFetch() {
+  if (fetching) return;
+
   const chipInput = document.getElementById('chip-input');
   if (chipInput.value.trim()) addChip(chipInput.value);
 
@@ -376,13 +423,15 @@ async function doFetch() {
     return;
   }
 
+  fetching = true;
+  fetchController = new AbortController();
   const fromAddresses = chips.map(c => c.value);
   const contains      = document.getElementById('contains-query').value.trim();
   const folder        = selectedFolder;
   const d1 = pToDate(sP), d2 = pToDate(eP);
 
   setStatus('searching\u2026', 'amber');
-  document.getElementById('fetch-btn').disabled = true;
+  setFetchBtn('cancel');
   document.getElementById('results-card').style.display = 'none';
   document.getElementById('not-found-bar').style.display = 'none';
   showProg(5, 'contacting server\u2026');
@@ -397,7 +446,8 @@ async function doFetch() {
     const r = await fetch('/api/fetch', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ folder, fromAddresses, contains, dateFrom: toISO(d1), dateTo: toISO(d2) }),
+      body: JSON.stringify({ folder, fromAddresses, contains, dateFrom: toISO(d1), dateTo: toISO(d2), maxMessages: parseInt(document.getElementById('max-msgs').value) || 50 }),
+      signal: fetchController.signal,
     });
     const d = await r.json();
     clearInterval(prog);
@@ -408,7 +458,7 @@ async function doFetch() {
       fetchedMeta.range = fmt(d1) + ' \u2192 ' + fmt(d2);
       showProg(100, 'done');
       setTimeout(hideProg, 600);
-      showResults(d.messages, d.notFound || []);
+      showResults(d.messages, d.notFound || [], d.capped);
 
       const found = d.messages.length;
       const nf    = d.notFound || [];
@@ -428,15 +478,29 @@ async function doFetch() {
   } catch (e) {
     clearInterval(prog);
     hideProg();
-    setStatus('failed: ' + e.message, 'red');
+    if (e.name === 'AbortError') {
+      setStatus('cancelled', 'amber');
+    } else {
+      setStatus('failed: ' + e.message, 'red');
+    }
   }
 
-  document.getElementById('fetch-btn').disabled = false;
+  fetching = false;
+  fetchController = null;
+  setFetchBtn('extract');
 }
 
 // ── RESULTS ───────────────────────────────────────────────────────────────────
-function showResults(msgs, notFound) {
+function showResults(msgs, notFound, capped) {
   document.getElementById('results-card').style.display = 'block';
+
+  const cappedBar = document.getElementById('capped-bar');
+  if (capped) {
+    cappedBar.textContent = 'More emails found than displayed here.';
+    cappedBar.style.display = 'block';
+  } else {
+    cappedBar.style.display = 'none';
+  }
 
   const nfBar = document.getElementById('not-found-bar');
   if (notFound.length) {

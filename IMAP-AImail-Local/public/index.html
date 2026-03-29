@@ -91,6 +91,10 @@ input.error{border-color:var(--red);}
           <label>App password</label>
           <input type="password" id="password" placeholder="xxxx xxxx xxxx xxxx" autocomplete="current-password" maxlength="128">
         </div>
+        <label style="display:flex;align-items:center;gap:8px;margin:10px 0;cursor:pointer;text-transform:none;letter-spacing:0;">
+          <input type="checkbox" id="persist" style="accent-color:var(--acc);width:14px;height:14px;cursor:pointer;">
+          <span style="font-family:var(--font);font-size:11px;color:var(--t2);">Stay signed in for 7 days</span>
+        </label>
         <button class="btn btn-primary" id="submit-btn" disabled onclick="doLogin()">Sign in</button>
         <p class="helper">
           Gmail only. Requires an app password &mdash; not your Gmail password.<br>
@@ -212,6 +216,7 @@ async function doLogin() {
       body:    new URLSearchParams({
         email:    emailEl.value.trim(),
         password: pwdEl.value,
+        persist:  document.getElementById('persist').checked ? '1' : '',
       }),
     });
 
