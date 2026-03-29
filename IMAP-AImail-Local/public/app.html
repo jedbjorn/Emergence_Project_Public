@@ -466,7 +466,7 @@ async function doFetch() {
       if (nf.length === 0 && found === 0) {
         setStatus(d.hint || 'No messages found for the selected criteria.', 'amber');
       } else if (nf.length === 0) {
-        setStatus(found + ' found', 'green');
+        setStatus(found + ' found, more may exist. Adjust counter or time frame as needed.', 'green');
       } else if (found > 0) {
         setStatus(found + ' found · ' + nf.map(a => a + ' not found').join(' · '), 'amber');
       } else {
