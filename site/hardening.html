@@ -571,7 +571,7 @@
   <h3 id="rate-limiting">Rate Limiting</h3>
 
   <ul>
-    <li>20 requests per hour per session (fixed window)</li>
+    <li>30 requests per hour per session (fixed window)</li>
     <li>429 returned when exceeded</li>
     <li>Applied to IMAP-triggering endpoints only</li>
   </ul>
@@ -587,14 +587,14 @@
       <tr><td>Password</td><td>Max 128 characters</td></tr>
       <tr><td>Dates</td><td>Strict ISO 8601 format, must parse as valid</td></tr>
       <tr><td>Mode</td><td>Allowlist only</td></tr>
-      <tr><td>Request body</td><td>Capped at 10kb</td></tr>
+      <tr><td>Request body</td><td>Capped at 20kb</td></tr>
     </tbody>
   </table>
 
   <h3 id="imap-safety">IMAP Safety</h3>
 
   <ul>
-    <li><strong>30-second connection timeout</strong> — a hung IMAP connection doesn't hold a session open indefinitely</li>
+    <li><strong>60-second connection timeout</strong> — a hung IMAP connection doesn't hold a session open indefinitely</li>
     <li><strong>Max 3 concurrent IMAP operations per session</strong> (semaphore-based)</li>
     <li><strong>Debug logging suppressed</strong> — verbose IMAP libraries can log credentials; that is disabled</li>
   </ul>
