@@ -357,11 +357,11 @@
     </thead>
     <tbody>
       <tr><td>Edge</td><td>Cloudflare</td><td>TLS termination, DDoS, CDN</td></tr>
-      <tr><td>Application</td><td>Node.js / Express on Debian VPS</td><td>IMAP sessions, business logic</td></tr>
+      <tr><td>Application</td><td>Node.js / Express on Debian VPS</td><td>IMAP sessions + Google OAuth track, business logic</td></tr>
     </tbody>
   </table>
 
-  <p>The Cloudflare Worker (Google OAuth track) runs in an isolated execution environment — no persistent server, no SSH surface. That track's hardening lives in the application code. This document covers both, with emphasis on the VPS layer where the attack surface is real and the decisions are ours.</p>
+  <p>Both tracks — IMAP and Google OAuth — run as Express applications on the same VPS, managed by PM2 and reverse-proxied through Caddy. They share the same OS-level hardening, the same network layer, and the same monitoring. This document covers the full stack.</p>
 
   <hr>
 
@@ -527,7 +527,7 @@
     </tbody>
   </table>
 
-  <p>TLS is terminated at Cloudflare for the public domain. Let's Encrypt handles the VPS directly.</p>
+  <p>TLS is terminated at Caddy on the VPS via automatic HTTPS. Cloudflare handles DNS and edge caching for the public site.</p>
 
   <hr>
 
@@ -734,7 +734,7 @@
     <li><strong>DDoS mitigation at scale.</strong> Cloudflare handles edge-level traffic. If Cloudflare goes down, the VPS is exposed. Accepted risk at current scale.</li>
     <li><strong>Zero-day kernel or library vulnerabilities.</strong> Unattended upgrades are enabled. We are not immunized against supply chain attacks.</li>
     <li><strong>Physical access to the host.</strong> We rent a VPS. Physical security is the provider's.</li>
-    <li><strong>The Cloudflare Worker attack surface.</strong> Different runtime, different threat model. Covered in application code.</li>
+    <li><strong>Cloudflare Pages (site hosting).</strong> The public site deploys via Cloudflare Pages — a static hosting layer with no server-side execution. Not covered here.</li>
   </ul>
 
   <hr>
