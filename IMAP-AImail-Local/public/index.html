@@ -91,10 +91,6 @@ input.error{border-color:var(--red);}
           <label>App password</label>
           <input type="password" id="password" placeholder="xxxx xxxx xxxx xxxx" autocomplete="current-password" maxlength="128">
         </div>
-        <label style="display:flex;align-items:center;gap:8px;margin:10px 0;cursor:pointer;text-transform:none;letter-spacing:0;">
-          <input type="checkbox" id="persist" style="accent-color:var(--acc);width:14px;height:14px;cursor:pointer;">
-          <span style="font-family:var(--font);font-size:11px;color:var(--t2);">Stay signed in for 7 days</span>
-        </label>
         <button class="btn btn-primary" id="submit-btn" disabled onclick="doLogin()">Sign in</button>
         <p class="helper">
           Gmail only. Requires an app password &mdash; not your Gmail password.<br>
@@ -104,6 +100,15 @@ input.error{border-color:var(--red);}
 
     </div>
   </div>
+
+  <!-- Persist toggle -->
+  <label style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:14px;cursor:pointer;">
+    <div id="persist-track" onclick="togglePersist()" style="position:relative;width:36px;height:20px;background:var(--b2);border-radius:10px;transition:background .2s;cursor:pointer;">
+      <div id="persist-thumb" style="position:absolute;top:2px;left:2px;width:16px;height:16px;background:var(--t3);border-radius:50%;transition:left .2s,background .2s;"></div>
+    </div>
+    <span style="font-family:var(--font);font-size:11px;color:var(--t3);letter-spacing:.04em;transition:color .2s;" id="persist-label">Stay signed in for 7 days</span>
+    <input type="checkbox" id="persist" style="display:none;">
+  </label>
 
   <!-- Meet the Team -->
   <div style="display:flex;justify-content:center;margin-bottom:14px;">
@@ -129,6 +134,25 @@ const submitBtn = document.getElementById('submit-btn');
 const errBar    = document.getElementById('err-bar');
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function togglePersist() {
+  const cb    = document.getElementById('persist');
+  const track = document.getElementById('persist-track');
+  const thumb = document.getElementById('persist-thumb');
+  const label = document.getElementById('persist-label');
+  cb.checked = !cb.checked;
+  if (cb.checked) {
+    track.style.background = 'var(--acc)';
+    thumb.style.left = '18px';
+    thumb.style.background = '#0c0c0c';
+    label.style.color = 'var(--acc)';
+  } else {
+    track.style.background = 'var(--b2)';
+    thumb.style.left = '2px';
+    thumb.style.background = 'var(--t3)';
+    label.style.color = 'var(--t3)';
+  }
+}
 
 function isValidEmail(v) {
   return EMAIL_RE.test(v.trim());
