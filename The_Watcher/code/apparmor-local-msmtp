@@ -1,0 +1,12 @@
+# AppArmor local override for msmtp
+# Copy to /etc/apparmor.d/local/usr.bin.msmtp
+#
+# Grants msmtp exactly what The Watcher needs and nothing else:
+#   - Read any file under /etc/msmtp/ (the logwatcher msmtp config)
+#   - Write to logwatcher's log directory
+#
+# After copying, reload the profile:
+#   sudo apparmor_parser -r /etc/apparmor.d/usr.bin.msmtp
+
+/etc/msmtp/* r,
+/var/lib/logwatcher/*.log wk,
