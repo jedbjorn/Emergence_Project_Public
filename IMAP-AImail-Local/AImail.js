@@ -534,12 +534,12 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
       .toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
     return res.status(429).json({
       ok:    false,
-      error: `You've reached the limit of 20 extractions per hour. Try again after ${resetStr}.`,
+      error: `You've reached the limit of ${RATE_LIMIT} extractions per hour. Try again after ${resetStr}.`,
     });
   }
 
   const { folder, fromAddresses = [], contains = '', dateFrom, dateTo, maxMessages: rawMax } = req.body;
-  const maxMessages = Math.max(5, Math.min(200, parseInt(rawMax) || 50));
+  const maxMessages = Math.max(5, Math.min(MAX_MESSAGES, parseInt(rawMax) || 50));
 
   if (!folder || typeof folder !== 'string' || folder.length > 100) {
     return res.status(400).json({ ok: false, error: 'Invalid request.' });
@@ -585,7 +585,7 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
         if (msgs.length === 0) {
           notFound.push(addr);
         } else {
-          if (msgs.length > maxMessages) { capped = true; msgs.length = maxMessages; }
+              if (msgs.length > maxMessages) { capped = true; msgs.length = maxMessages; }
           msgs.forEach(m => { if (!seen.has(m.uid)) { seen.add(m.uid); merged.push(m); } });
         }
       }
