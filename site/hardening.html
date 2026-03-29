@@ -380,7 +380,7 @@
   <ul>
     <li><strong>Key-only authentication.</strong> Password auth disabled entirely in <code>sshd_config</code>. No exceptions.</li>
     <li><strong>Root login disabled.</strong> <code>PermitRootLogin no</code>. All admin work is done as a named sudo user.</li>
-    <li><strong>Max 3 authentication attempts</strong> per connection.</li>
+    <li><strong>Max 10 authentication attempts</strong> per connection.</li>
     <li><strong>20-second login grace timeout.</strong></li>
     <li><strong>Restricted to a single named user.</strong></li>
     <li><strong>Non-standard port.</strong> Confirmed working before port 22 was closed. Application login was tested before root was disabled. You don't cut off your backstop before you've confirmed the new path.</li>
@@ -748,7 +748,7 @@
     <tbody>
       <tr><td>Network</td><td>UFW deny-all, three explicit allows, non-standard SSH port</td></tr>
       <tr><td>OS</td><td>fail2ban (10 attempts / 1hr window / 1hr ban), auto-updates, sysctl hardening (SYN cookies, ICMP, martians), service audit</td></tr>
-      <tr><td>SSH</td><td>Key-only, 3 max attempts, 20s grace, single named user, no root</td></tr>
+      <tr><td>SSH</td><td>Key-only, 10 max attempts, 20s grace, single named user, no root</td></tr>
       <tr><td>Process</td><td>PM2 with reboot survival, monitored daily with restart delta tracking</td></tr>
       <tr><td>Detection</td><td>OS-level watcher on 5-min cycle, dedicated least-privilege user, out-of-band alerts</td></tr>
       <tr><td>Monitoring</td><td>Daily colour-coded system + security report, fail2ban stats, SSH attempt counts</td></tr>
