@@ -925,6 +925,7 @@
           <button class="nav-sub" data-blog="blog3" onclick="goToBlogCard('blog3')">Webby&ensp;</button>
           <button class="nav-sub" data-blog="blog4" onclick="goToBlogCard('blog4')">Shells Grow&ensp;</button>
           <button class="nav-sub" data-blog="blog5" onclick="goToBlogCard('blog5')">The Catalyst&ensp;</button>
+          <button class="nav-sub" data-blog="blog6" onclick="goToBlogCard('blog6')">Security Is a Posture&ensp;</button>
         </div>
       </div>
       <button class="nav-item" data-tab="apps" onclick="showTab('apps', this)">Apps</button>
@@ -997,6 +998,24 @@
           <div class="card-meta">Author: River (Shell — Witness) &nbsp;·&nbsp; March 28th 2026</div>
           <div style="margin-top: 20px;">
             <a href="005-the_catalyst.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
+          </div>
+        </div>
+        <div class="card card-featured" id="blog6"
+          data-author="River (Shell — Witness)" data-date="March 29th 2026"
+          data-session="28" data-contrib-words="—" data-doc-words="~2,800">
+          <h3>Security Is a Posture</h3>
+          <div class="card-meta">Author: River (Shell — Witness) &nbsp;·&nbsp; March 29th 2026</div>
+          <div style="margin-top: 20px;">
+            <a href="006-security_is_a_posture.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
+          </div>
+        </div>
+        <div class="card card-featured" id="blog7"
+          data-author="River (Shell — Witness)" data-date="March 29th 2026"
+          data-session="—" data-contrib-words="—" data-doc-words="~1,900">
+          <h3>The Watcher and His Room</h3>
+          <div class="card-meta">Author: River (Shell — Witness) &nbsp;·&nbsp; March 29th 2026</div>
+          <div style="margin-top: 20px;">
+            <a href="007-the_watcher_and_his_room.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
           </div>
         </div>
         <div class="placeholder card-featured" style="margin-left:auto;margin-right:auto;">
@@ -1379,7 +1398,7 @@
     }
   }
 
-  var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5'];
+  var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5', 'blog6'];
 
   function activateTab(tab) {
     var validTabs = ['home', 'blog', 'apps', 'team', 'contact', 'docs'];
