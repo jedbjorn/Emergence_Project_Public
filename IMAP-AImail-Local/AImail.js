@@ -665,12 +665,16 @@ setInterval(() => {
 const HOST = '127.0.0.1';
 app.listen(PORT, HOST, () => {
   const url = `http://${HOST}:${PORT}`;
+  const msg = `AImail running → ${url}`;
+  const pad = 3;
+  const w   = msg.length + pad * 2;
+  const sp  = ' '.repeat(pad);
   console.log('');
-  console.log('  ┌─────────────────────────────────────┐');
-  console.log('  │                                     │');
-  console.log(`  │   AImail running → ${url}   │`);
-  console.log('  │                                     │');
-  console.log('  └─────────────────────────────────────┘');
+  console.log('  ┌' + '─'.repeat(w) + '┐');
+  console.log('  │' + ' '.repeat(w) + '│');
+  console.log(`  │${sp}${msg}${sp}│`);
+  console.log('  │' + ' '.repeat(w) + '│');
+  console.log('  └' + '─'.repeat(w) + '┘');
   console.log('');
 
   // Open default browser
