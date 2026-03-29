@@ -665,7 +665,13 @@ setInterval(() => {
 const HOST = '127.0.0.1';
 app.listen(PORT, HOST, () => {
   const url = `http://${HOST}:${PORT}`;
-  console.log(`AImail listening on ${url}`);
+  console.log('');
+  console.log('  ┌─────────────────────────────────────┐');
+  console.log('  │                                     │');
+  console.log(`  │   AImail running → ${url}   │`);
+  console.log('  │                                     │');
+  console.log('  └─────────────────────────────────────┘');
+  console.log('');
 
   // Open default browser
   const { exec } = require('child_process');
