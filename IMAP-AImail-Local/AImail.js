@@ -664,5 +664,13 @@ setInterval(() => {
 // ── START ─────────────────────────────────────────────────────────────────────
 const HOST = '127.0.0.1';
 app.listen(PORT, HOST, () => {
-  console.log(`aimail-beta listening on ${HOST}:${PORT} (local mode)`);
+  const url = `http://${HOST}:${PORT}`;
+  console.log(`AImail listening on ${url}`);
+
+  // Open default browser
+  const { exec } = require('child_process');
+  const cmd = process.platform === 'darwin' ? `open ${url}`
+            : process.platform === 'win32'  ? `start ${url}`
+            : `xdg-open ${url}`;
+  exec(cmd, () => {});
 });
