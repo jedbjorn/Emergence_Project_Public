@@ -1,6 +1,6 @@
 # Mail Extract — Local IMAP Edition
 
-Extract emails from Gmail as clean, AI-ready text. Run it locally on your machine — no server, no cloud, no data leaves your computer.
+Extract emails from Gmail as clean, AI-ready text. Runs entirely on your machine — no server, no cloud, no data leaves your computer.
 
 Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
 
@@ -15,11 +15,13 @@ Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
 - Displays a preview with message count, character count, and estimated token count
 - One-click copy of all extracted messages
 
+---
+
 ## Requirements
 
 - **Node.js** 18 or later — [download here](https://nodejs.org/)
+- **Git** — [download here](https://git-scm.com/)
 - **Gmail account** with an **app password** — [how to create one](https://support.google.com/accounts/answer/185833)
-- Github installed and activated on the device you are using
 
 > An app password is a 16-character code that lets apps access your Gmail without your main password. It requires 2-Step Verification to be enabled on your Google account.
 
@@ -27,58 +29,53 @@ Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
 
 ## Setup
 
-### macOS
-Download the node.js installer from the [official site](https://nodejs.org/en/download)
-
 ```bash
-# Clone and install
 git clone https://github.com/jedbjorn/Emergence_Project_Public.git
 cd Emergence_Project_Public/IMAP-AImail-Local
 npm install
+```
 
-# Run
+---
+
+## Running the app
+
+### macOS — from the Dock
+
+Add `launch.command` to your Dock for one-click launch.
+
+**First time only — make it executable:**
+```bash
+chmod +x launch.command
+```
+
+Then drag `launch.command` to your Dock. Click it — Terminal opens, the app starts, and your browser loads automatically.
+
+> If macOS says the file can't be opened, right-click → Open → Open. You'll only need to do this once.
+
+To stop the app, close the Terminal window.
+
+### macOS / Linux — from the terminal
+
+```bash
 node AImail.js
 ```
-In Terminal, press Ctrl+C to terminate the service. 
 
-### Windows
+Press `Ctrl+C` to stop.
 
-1. Download and install Node.js from [nodejs.org](https://nodejs.org/) (LTS recommended)
-2. Open **Command Prompt** or **PowerShell**
+### Windows — Command Prompt or PowerShell
 
 ```cmd
-git clone https://github.com/jedbjorn/Emergence_Project_Public.git
-cd Emergence_Project_Public\IMAP-AImail-Local
-npm install
-
 node AImail.js
 ```
 
-### Linux
-
-```bash
-# Install Node.js (Debian/Ubuntu)
-sudo apt update && sudo apt install -y nodejs npm
-
-# Or use nvm
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
-nvm install 18
-
-# Clone and install
-git clone https://github.com/jedbjorn/Emergence_Project_Public.git
-cd Emergence_Project_Public/IMAP-AImail-Local
-npm install
-
-# Run
-node AImail.js
-```
+Press `Ctrl+C` to stop.
 
 ---
 
 ## Usage
 
-1. Start the server: `node AImail.js`
-2. Open your browser: **http://localhost:3000**
+1. Start the app using one of the methods above
+2. Your browser opens automatically to **http://localhost:3000**
 3. Enter your Gmail address and app password
 4. Use the filters to search your email:
    - **Folder** — toggle between Inbox and All Mail
@@ -92,8 +89,9 @@ node AImail.js
 
 ## Security
 
-- **No data leaves your machine.** The app runs entirely on localhost.
-- **Passwords are encrypted in memory** using AES-256-GCM with a random key generated on each startup. They are never written to disk or logged.
+- **No data leaves your machine.** The app runs entirely on localhost and connects only to `imap.gmail.com` to fetch your email.
+- **Your app password is encrypted** using AES-256-GCM. The encryption key lives only in your browser cookie — the two halves are never stored together. Neither side is useful without the other.
+- **A session file is written to disk** while you are signed in. It contains your email address and the encrypted password. It is deleted when you log out. If the app is closed without logging out, the file is cleaned up the next time the app starts.
 - **Sessions expire** after 2 hours of inactivity or 8 hours total.
 - **Rate limited** to 30 extractions per hour per session.
 - App passwords can be revoked anytime from your [Google Account security settings](https://myaccount.google.com/apppasswords).
@@ -105,21 +103,19 @@ node AImail.js
 | Environment variable | Default | Description |
 |---|---|---|
 | `PORT` | `3000` | Port to run the server on |
+| `SESSIONS_DIR` | `./sessions` | Where session files are stored |
 
-Example with a custom port:
-
+**Custom port — macOS / Linux:**
 ```bash
 PORT=8080 node AImail.js
 ```
 
-On Windows (PowerShell):
-
+**Custom port — Windows (PowerShell):**
 ```powershell
 $env:PORT=8080; node AImail.js
 ```
 
-On Windows (Command Prompt):
-
+**Custom port — Windows (Command Prompt):**
 ```cmd
 set PORT=8080 && node AImail.js
 ```
@@ -133,7 +129,6 @@ set PORT=8080 && node AImail.js
 | [express](https://expressjs.com/) | Web server |
 | [imapflow](https://imapflow.com/) | IMAP client for Gmail |
 | [mailparser](https://nodemailer.com/extras/mailparser/) | Email parsing and MIME handling |
-| [uuid](https://github.com/uuidjs/uuid) | Session ID generation |
 
 ---
 
@@ -150,6 +145,13 @@ set PORT=8080 && node AImail.js
 
 **Port already in use**
 - Another process is using port 3000. Run with `PORT=3001 node AImail.js`
+
+**`npm install` fails with certificate errors (managed/corporate Mac)**
+```bash
+npm config set strict-ssl false
+npm install
+npm config set strict-ssl true
+```
 
 **No results found**
 - Try a wider date range
