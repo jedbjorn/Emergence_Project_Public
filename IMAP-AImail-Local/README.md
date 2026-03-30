@@ -32,6 +32,8 @@ Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
 # Install Node.js (if not installed)
 brew install node
 
+or download the installer from the official site: https://nodejs.org/en/download
+
 # Clone and install
 git clone https://github.com/jedbjorn/Emergence_Project_Public.git
 cd Emergence_Project_Public/IMAP-AImail-Local
