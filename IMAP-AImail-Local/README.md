@@ -19,6 +19,7 @@ Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
 
 - **Node.js** 18 or later — [download here](https://nodejs.org/)
 - **Gmail account** with an **app password** — [how to create one](https://support.google.com/accounts/answer/185833)
+- Github installed and activated on the device you are using
 
 > An app password is a 16-character code that lets apps access your Gmail without your main password. It requires 2-Step Verification to be enabled on your Google account.
 
@@ -27,13 +28,9 @@ Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
 ## Setup
 
 ### macOS
+Download the node.js installer from the [official site](https://nodejs.org/en/download)
 
 ```bash
-# Install Node.js (if not installed)
-brew install node
-
-or download the installer from the official site: https://nodejs.org/en/download
-
 # Clone and install
 git clone https://github.com/jedbjorn/Emergence_Project_Public.git
 cd Emergence_Project_Public/IMAP-AImail-Local
