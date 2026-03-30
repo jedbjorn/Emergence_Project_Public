@@ -39,6 +39,7 @@ npm install
 # Run
 node AImail.js
 ```
+In Terminal, press Ctrl+C to terminate the service. 
 
 ### Windows
 
