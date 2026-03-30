@@ -39,22 +39,7 @@ npm install
 
 ## Running the app
 
-### macOS — from the Dock
-
-Add `launch.command` to your Dock for one-click launch.
-
-**First time only — make it executable:**
-```bash
-chmod +x launch.command
-```
-
-Then drag `launch.command` to your Dock. Click it — Terminal opens, the app starts, and your browser loads automatically.
-
-> If macOS says the file can't be opened, right-click → Open → Open. You'll only need to do this once.
-
-To stop the app, close the Terminal window.
-
-### macOS / Linux — from the terminal
+### macOS / Linux
 
 ```bash
 node AImail.js
@@ -91,7 +76,7 @@ Press `Ctrl+C` to stop.
 
 - **No data leaves your machine.** The app runs entirely on localhost and connects only to `imap.gmail.com` to fetch your email.
 - **Your app password is encrypted** using AES-256-GCM. The encryption key lives only in your browser cookie — the two halves are never stored together. Neither side is useful without the other.
-- **A session file is written to disk** while you are signed in. It contains your email address and the encrypted password. It is deleted when you log out. If the app is closed without logging out, the file is not cleared. To clear the file, sign out. 
+- **A session file is written to disk** while you are signed in. It contains your email address and the encrypted password. It is deleted only when you explicitly log out — closing the browser tab does not delete it. If the app is closed without logging out, the file persists until the session expires (2 hours of inactivity or 8 hours total).
 - **Sessions expire** after 2 hours of inactivity or 8 hours total.
 - **Rate limited** to 30 extractions per hour per session.
 - App passwords can be revoked anytime from your [Google Account security settings](https://myaccount.google.com/apppasswords).
