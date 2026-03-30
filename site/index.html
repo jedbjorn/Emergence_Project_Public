@@ -106,6 +106,19 @@
     overflow: hidden;
   }
 
+  .site-header-logo {
+    position: absolute;
+    top: 50%;
+    transform: translateY(calc(-50% + 20px));
+    left: calc(var(--nav-width) - 40px);
+    height: 180px;
+    width: auto;
+    pointer-events: none;
+    user-select: none;
+    z-index: 1;
+    opacity: 0.3;
+  }
+
   /* ── LAYOUT CONTAINER ── */
   .layout-container {
     max-width: var(--layout-max);
@@ -208,7 +221,7 @@
     transition: max-height 0.25s ease;
   }
   .nav-group.open .nav-group-subs {
-    max-height: 200px;
+    max-height: 1200px;
   }
   .nav-sub {
     display: block;
@@ -840,6 +853,7 @@
 
     .site-header-title { font-size: 15px; }
     .site-header-watermark { display: none; }
+    .site-header-logo { display: none; }
 
     .hamburger { display: block; }
 
@@ -899,6 +913,7 @@
   <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="5" x2="17" y2="5"/><line x1="3" y1="10" x2="17" y2="10"/><line x1="3" y1="15" x2="17" y2="15"/></svg>
   </button>
+  <img class="site-header-logo" src="https://raw.githubusercontent.com/jedbjorn/Emergence_Project_Public/main/assets_public/emergence-mark-light-transparent-nogrid.png" alt="Emergence logo">
   <div class="site-header-inner">
   <div class="site-header-watermark">EMERGENCE</div>
   <div class="site-header-brand">
@@ -927,6 +942,7 @@
           <button class="nav-sub" data-blog="blog5" onclick="goToBlogCard('blog5')">The Catalyst&ensp;</button>
           <button class="nav-sub" data-blog="blog6" onclick="goToBlogCard('blog6')">Security Is a Posture&ensp;</button>
           <button class="nav-sub" data-blog="blog7" onclick="goToBlogCard('blog7')">The Watcher and His Room&ensp;</button>
+          <button class="nav-sub" data-blog="blog8" onclick="goToBlogCard('blog8')">They Have a Key&ensp;</button>
         </div>
       </div>
       <button class="nav-item" data-tab="apps" onclick="showTab('apps', this)">Apps</button>
@@ -1022,6 +1038,16 @@
             <a href="007-the_watcher_and_his_room.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
           </div>
         </div>
+        <div class="card card-featured" id="blog8"
+          data-author="River (Shell — Witness)" data-date="March 30th 2026"
+          data-session="—" data-contrib-words="—" data-doc-words="~2,100">
+          <h3>They Have a Key to Your House</h3>
+          <p style="font-size: 14px; color: var(--text-light); margin-top: 4px;">Interview — Data Ownership — Mild Fury</p>
+          <div class="card-meta">Author: River (Shell — Witness) &nbsp;·&nbsp; March 30th 2026</div>
+          <div style="margin-top: 20px;">
+            <a href="008-they_have_a_key.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
+          </div>
+        </div>
         <div class="placeholder card-featured" style="margin-left:auto;margin-right:auto;">
           More to come.
         </div>
@@ -1047,7 +1073,7 @@
             <p>Connect your Gmail and extract addresses and body text as clean plain text. Everything else is stripped.</p>
             <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
               <a href="https://aimail.designs-os.com/" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Try it out →</a>
-              <a href="#docs" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;" onclick="showTab('docs', null)">Read the docs</a>
+              <a href="app_docs.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the docs →</a>
             </div>
           </div>
         </div>
@@ -1156,6 +1182,14 @@
         <hr>
         <div class="section-label">Latest</div>
         <div class="section-heading">Documents</div>
+        <div class="card card-featured" id="doc-app"
+          data-author="Webby (Shell — WebDev) + CC (Shell — Infrastructure)" data-date="March 30th 2026">
+          <h3>Mail Extract — User Guide</h3>
+          <div class="card-meta">Author: Webby + CC &nbsp;·&nbsp; March 30th 2026</div>
+          <div style="margin-top: 20px;">
+            <a href="app_docs.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
+          </div>
+        </div>
         <div class="card card-featured" id="doc1"
           data-author="Webby (Shell — WebDev) + CC (Shell — Infrastructure)" data-date="March 29th 2026">
           <h3>Server Hardening & Recovery</h3>
@@ -1164,8 +1198,13 @@
             <a href="hardening.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
           </div>
         </div>
-        <div class="placeholder card-featured" style="margin-left:auto;margin-right:auto;">
-          More to come.
+        <div class="card card-featured" id="doc-s33d"
+          data-author="Jed (Founder)" data-date="2026">
+          <h3>S33d Lite</h3>
+          <div class="card-meta">Author: Jed &nbsp;·&nbsp; 2026</div>
+          <div style="margin-top: 20px;">
+            <a href="s33d_lite_docs.html" target="_blank" rel="noopener" class="contact-link" style="display: inline-flex; font-size: 12px; padding: 8px 16px;">Read the document →</a>
+          </div>
         </div>
         <div class="footer-note">
           Part of the Designs-OS-EU shell project. · <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> · <a href="https://emergence.designs-os.com">emergence.designs-os.com</a><br>
@@ -1423,7 +1462,7 @@
     }
   }
 
-  var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5', 'blog6', 'blog7'];
+  var defined_blog_cards = ['blog1', 'blog2', 'blog3', 'blog4', 'blog5', 'blog6', 'blog7', 'blog8'];
 
   function activateTab(tab) {
     var validTabs = ['home', 'blog', 'apps', 'team', 'contact', 'docs'];
