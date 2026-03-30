@@ -91,7 +91,7 @@ Press `Ctrl+C` to stop.
 
 - **No data leaves your machine.** The app runs entirely on localhost and connects only to `imap.gmail.com` to fetch your email.
 - **Your app password is encrypted** using AES-256-GCM. The encryption key lives only in your browser cookie — the two halves are never stored together. Neither side is useful without the other.
-- **A session file is written to disk** while you are signed in. It contains your email address and the encrypted password. It is deleted when you log out. If the app is closed without logging out, the file is cleaned up the next time the app starts.
+- **A session file is written to disk** while you are signed in. It contains your email address and the encrypted password. It is deleted when you log out. If the app is closed without logging out, the file is not cleared. To clear the file, sign out. 
 - **Sessions expire** after 2 hours of inactivity or 8 hours total.
 - **Rate limited** to 30 extractions per hour per session.
 - App passwords can be revoked anytime from your [Google Account security settings](https://myaccount.google.com/apppasswords).
