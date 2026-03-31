@@ -90,7 +90,7 @@ select option{background:var(--s2);}
       <div style="display:flex;align-items:center;gap:10px;">
         <span class="dot green"></span>
         <span id="user-email" style="font-family:var(--font);font-size:11px;color:var(--t2);"></span>
-        <button class="btn btn-sm" onclick="doLogout()">sign out</button>
+        <button class="btn btn-sm" onclick="doLogout()"><span style="color:var(--red)">←</span> sign out</button>
       </div>
     </div>
   </div>
@@ -136,8 +136,7 @@ select option{background:var(--s2);}
         </div>
       </div>
       <div style="margin-bottom:14px;">
-        <span onclick="resetSearch()" style="font-family:var(--font);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:color .15s;"
-          onmouseover="this.style.color='var(--acc2)'" onmouseout="this.style.color='var(--t3)'">reset</span>
+        <button class="btn btn-sm" onclick="resetSearch()">✕ reset</button>
       </div>
 
       <div class="tl-wrap">
