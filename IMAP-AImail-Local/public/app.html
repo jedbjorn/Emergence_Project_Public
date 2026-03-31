@@ -262,9 +262,14 @@ function renderChips() {
 }
 
 function addChip(value) {
-  const v = value.trim();
-  if (!v) return;
-  chips.push({ value: v, valid: isValidEmail(v) });
+  const parts = value.split(',');
+  for (const part of parts) {
+    const v = part.trim().replace(/^[<>\s]+|[<>\s]+$/g, '');
+    if (!v) continue;
+    if (!chips.some(c => c.value === v)) {
+      chips.push({ value: v, valid: isValidEmail(v) });
+    }
+  }
   renderChips();
   document.getElementById('chip-input').value = '';
 }
