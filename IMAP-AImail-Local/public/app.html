@@ -264,7 +264,8 @@ function renderChips() {
 function addChip(value) {
   const parts = value.split(',');
   for (const part of parts) {
-    const v = part.trim().replace(/^[<>\s]+|[<>\s]+$/g, '');
+    const angle = part.match(/<([^>]+)>/);
+    const v = (angle ? angle[1] : part).trim().replace(/^[<>\s]+|[<>\s]+$/g, '');
     if (!v) continue;
     if (!chips.some(c => c.value === v)) {
       chips.push({ value: v, valid: isValidEmail(v) });
