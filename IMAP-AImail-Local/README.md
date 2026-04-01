@@ -2,7 +2,7 @@
 
 Extract emails from Gmail as clean, AI-ready text. Runs entirely on your machine — no server, no cloud, no data leaves your computer.
 
-Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS.
+Part of the [Emergence Project](https://emergence.designs-os.com/) by Design/OS. Full documentation at [emergence.designs-os.com](https://emergence.designs-os.com/).
 
 ---
 
