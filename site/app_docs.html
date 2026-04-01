@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta property="og:image" content="https://raw.githubusercontent.com/jedbjorn/Emergence_Project_Public/main/assets_public/emergence-wordmark.png">
+<title>Documentation — Mail Extract</title>
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/jedbjorn/Emergence_Project_Public/main/assets_public/emergence-mark-light.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --bg-alt: #f0eeea;
+    --bg-card: #ffffff;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-light: #7a7a7a;
+    --accent: #2c5f4a;
+    --accent-light: #e8f0ec;
+    --accent-hover: #1e4435;
+    --border: #d8d5cf;
+    --border-light: #e8e5df;
+    --mono: 'IBM Plex Mono', monospace;
+    --serif: 'Source Serif 4', Georgia, serif;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--serif);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .header {
+    padding: 12px 0 6px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+  .header-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .header-sub {
+    font-size: 16px;
+    color: var(--text-mid);
+    font-weight: 300;
+    max-width: 560px;
+  }
+  .header-meta {
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    display: flex;
+    column-gap: 24px;
+    row-gap: 0;
+    flex-wrap: wrap;
+  }
+
+  .layout {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .sidenav {
+    width: 600px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    background: var(--bg);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 32px 0 32px 24px;
+    scrollbar-width: none;
+  }
+  .sidenav::-webkit-scrollbar { display: none; }
+  .content { scrollbar-width: none; }
+  .content::-webkit-scrollbar { display: none; }
+
+  .sidenav a {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-light);
+    text-decoration: none;
+    text-align: right;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .sidenav a:hover {
+    color: var(--text-mid);
+    background: var(--bg-alt);
+  }
+  .sidenav a.active {
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+  .sidenav a.sub {
+    font-size: 11px;
+    font-weight: 400;
+    padding: 6px 16px 6px 28px;
+  }
+
+  @media (max-width: 900px) {
+    .sidenav { display: none; }
+  }
+
+  .content {
+    max-width: 720px;
+    margin: 0;
+    padding: 48px 32px 80px;
+    flex: 1;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  .content p {
+    font-size: 17px;
+    color: var(--text-mid);
+    margin-bottom: 24px;
+    line-height: 1.8;
+  }
+
+  .content h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 48px 0 16px;
+  }
+
+  .content h3 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    margin: 36px 0 12px;
+  }
+
+  .principle {
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    margin: 32px 0;
+    background: var(--accent-light);
+    border-radius: 0 6px 6px 0;
+  }
+  .principle p {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.7;
+  }
+  .principle p:last-child {
+    margin-bottom: 0;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 48px 0;
+  }
+
+  .footer-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-light);
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-light);
+    text-align: center;
+  }
+  .footer-note a { color: var(--accent); text-decoration: none; }
+  .footer-note a:hover { text-decoration: underline; }
+
+  .role-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-size: 15px;
+  }
+  .role-table th {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .role-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-mid);
+    line-height: 1.6;
+    vertical-align: top;
+  }
+  .role-table td:first-child {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .content ul {
+    margin: 0 0 24px 24px;
+    font-size: 17px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .content ul li {
+    margin-bottom: 8px;
+  }
+
+  .content code {
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--bg-alt);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+
+  .content ol {
+    margin: 0 0 24px 24px;
+    font-size: 17px;
+    color: var(--text-mid);
+    line-height: 1.8;
+  }
+  .content ol li {
+    margin-bottom: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-label">Documentation</div>
+    <h1>Mail Extract — User Guide</h1>
+    <p class="header-sub"><em>Extract emails as clean text. Feed to AI as context.</em></p>
+    <div class="header-meta">
+    </div>
+    <a href="https://emergence.designs-os.com/" target="_blank" rel="noopener" style="display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text-light);text-decoration:none;text-transform:uppercase;margin-top:0;transition:color .15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-light)'">&larr; THE EMERGENCE PROJECT</a>
+  </div>
+</div>
+
+<div class="layout">
+
+<nav class="sidenav" id="sidenav">
+  <a href="#what-is-mail-extract">What Is Mail Extract</a>
+  <a href="#signing-in">Signing In</a>
+  <a href="#stay-signed-in">Stay Signed In</a>
+  <a href="#searching-for-emails">Searching for Emails</a>
+  <a href="#folders">Folders</a>
+  <a href="#from-filter">From Filter</a>
+  <a href="#contains-filter">Contains Filter</a>
+  <a href="#date-range">Date Range</a>
+  <a href="#max-messages">Max Messages</a>
+  <a href="#results-and-export">Results & Export</a>
+  <a href="#signing-out">Signing Out</a>
+  <a href="#troubleshooting">Troubleshooting</a>
+  <a href="#limits-and-quotas">Limits & Quotas</a>
+  <a href="#how-text-extraction-works">How Text Extraction Works</a>
+  <a href="#sessions-and-security">Sessions & Security</a>
+  <a href="#privacy">Privacy</a>
+</nav>
+
+<div class="content" id="content">
+
+  <p>This is the complete guide to Mail Extract — what it does, how to use it, and how it handles your data. Written for anyone, with technical detail where it matters.</p>
+
+  <hr>
+
+  <h2 id="what-is-mail-extract">What Is Mail Extract</h2>
+
+  <p>Mail Extract pulls emails from your Gmail account and gives you clean, readable text. No formatting noise, no HTML, no reply chains — just the content. The output is designed to be pasted directly into AI tools like ChatGPT or Claude as context.</p>
+
+  <p>You search by sender, keyword, date range, and folder. The app returns the matching messages as plain text, ready to copy. Nothing is saved after your session ends.</p>
+
+  <div class="principle">
+    <p>Mail Extract is a read-only tool. It cannot send, delete, modify, or archive your emails. It reads, extracts, and forgets.</p>
+  </div>
+
+  <hr>
+
+  <h2 id="signing-in">Signing In</h2>
+
+  <p>There are two ways to sign in, depending on how you want to authenticate with Gmail.</p>
+
+  <h3>IMAP — App Password</h3>
+
+  <p>Enter your Gmail address and a Google App Password. This is <strong>not</strong> your regular Gmail password — it's a special password you generate in your Google account settings specifically for third-party apps.</p>
+
+  <ol>
+    <li>Enter your Gmail address and press Enter</li>
+    <li>Enter your app password in the field that appears</li>
+    <li>Click <strong>Sign in</strong></li>
+  </ol>
+
+  <p>If you don't have an app password yet, the login page includes a link to Google's setup guide. You'll need two-factor authentication enabled on your Google account first.</p>
+
+  <h3>Google OAuth</h3>
+
+  <p>Click <strong>Sign in with Google</strong>. You'll be redirected to Google's consent screen, where you grant read-only access to your Gmail. No passwords are entered in our app — Google handles the entire authentication.</p>
+
+  <p>The OAuth track is currently in testing and limited to approved users. If you're not on the list, use the IMAP option.</p>
+
+  <div class="principle">
+    <p>Both sign-in methods give you the same app with the same features. The only difference is how you authenticate.</p>
+  </div>
+
+  <hr>
+
+  <h2 id="stay-signed-in">Stay Signed In</h2>
+
+  <p>On the login page, you'll see a toggle: <strong>Stay signed in for 7 days</strong>. When this is off (the default), your session expires after 2 hours of inactivity or 8 hours total — whichever comes first.</p>
+
+  <p>When you turn it on, your session lasts up to 7 days. You can close the browser, come back later, and pick up where you left off without signing in again.</p>
+
+  <p>In both cases, your session is encrypted on disk and automatically deleted when it expires. Logging out destroys it immediately.</p>
+
+  <hr>
+
+  <h2 id="searching-for-emails">Searching for Emails</h2>
+
+  <p>Once signed in, you'll see the main search interface. There are four filters you can combine: folder, sender address, keyword, and date range. You don't need to use all of them — leaving a filter empty means "match anything" for that field.</p>
+
+  <hr>
+
+  <h2 id="folders">Folders</h2>
+
+  <p>Choose between <strong>Inbox</strong> and <strong>All Mail</strong>. Inbox searches only your current inbox. All Mail searches everything — inbox, sent, archived, and any labels you've created. All Mail is selected by default.</p>
+
+  <hr>
+
+  <h2 id="from-filter">From Filter</h2>
+
+  <p>Type an email address and press Enter to add it as a chip. You can add up to 20 addresses. The search returns emails from <em>any</em> of the addresses you list — it's an "or" search, not "and."</p>
+
+  <p>You can also paste a comma-separated list of addresses and they'll all be added as individual chips at once. This works with addresses copied from email clients in display name format — for example, pasting <code>Dennis Lanphier &lt;dennis@example.com&gt;, Sandy Roan &lt;sandy@example.com&gt;</code> will extract just the email addresses and add them as chips. Display names, angle brackets, extra commas, and surrounding spaces are all stripped automatically. Duplicate addresses are ignored.</p>
+
+  <p>Each chip is validated as you add it. If an address isn't a valid email format, it shows with a red border. You can remove any chip by clicking the X on it. Pressing backspace in an empty field removes the last chip.</p>
+
+  <p>If you leave this filter empty, the search returns emails from all senders.</p>
+
+  <hr>
+
+  <h2 id="contains-filter">Contains Filter</h2>
+
+  <p>Enter a word or phrase to search for in email subjects and body text. The search is not case sensitive. If you've also added sender addresses, both filters must match — the email must be from one of those senders <em>and</em> contain the keyword.</p>
+
+  <hr>
+
+  <h2 id="date-range">Date Range</h2>
+
+  <p>The timeline slider covers the last 24 months. Drag the left and right handles to set your start and end dates. The selected range is displayed above the slider.</p>
+
+  <p>Both dates are inclusive — if you set the range to January 2025 through March 2025, you'll get emails from the first day of January through the last day of March.</p>
+
+  <hr>
+
+  <h2 id="max-messages">Max Messages</h2>
+
+  <p>In the top right of the filters card, you'll see a <strong>max</strong> counter. This controls how many emails are returned per search. The default is 50. You can set it anywhere from 5 to 200.</p>
+
+  <p>The counter is colour-coded as a rough guide:</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Range</th><th>Colour</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>5 &ndash; 50</td><td>Green</td><td>Fast, responsive</td></tr>
+      <tr><td>51 &ndash; 100</td><td>Amber</td><td>May take a moment</td></tr>
+      <tr><td>101 &ndash; 200</td><td>Red</td><td>Slower — larger extractions</td></tr>
+    </tbody>
+  </table>
+
+  <p>If your search matches more emails than the max, the results will show a notice that more exist. You can increase the counter or narrow your date range to capture them.</p>
+
+  <hr>
+
+  <h2 id="results-and-export">Results & Export</h2>
+
+  <p>After a search completes, the results card appears with a preview of the first 8 messages. Each message shows the date, sender, subject, and the first 300 characters of the body. If there are more than 8, you'll see a note like "... and 42 more (all included in copy)."</p>
+
+  <p>Below the preview, you'll see a summary: how many emails were found, the total character count, and an estimated token count (characters divided by 4 — a rough approximation for most AI models).</p>
+
+  <h3>Copying</h3>
+
+  <p>Click <strong>Copy All</strong> to copy every extracted email to your clipboard. The full text is copied — not just the preview. The export includes a header with your search parameters (account, query, date range) followed by the complete text of every message.</p>
+
+  <p>The button briefly changes to "copied!" to confirm it worked.</p>
+
+  <h3>Status Indicators</h3>
+
+  <p>The coloured dot next to the status bar tells you what happened:</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Colour</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Green</td><td>Emails found successfully</td></tr>
+      <tr><td>Amber</td><td>Partial results — some addresses had no matches, or no emails found at all</td></tr>
+      <tr><td>Red</td><td>No results for any address, or an error occurred</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2 id="signing-out">Signing Out</h2>
+
+  <p>Click <strong>Sign out</strong> in the top right of the account card. Your session is destroyed immediately — the encrypted session file is deleted from disk and your browser cookie is cleared. There is nothing left to recover.</p>
+
+  <p>If you close the tab without signing out, the session will expire on its own (2 hours or 7 days, depending on your setting) and be cleaned up automatically.</p>
+
+  <hr>
+
+  <h2 id="troubleshooting">Troubleshooting</h2>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Problem</th><th>What to do</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>"Sign-in failed"</td><td>Double-check that you're using a Google App Password, not your regular Gmail password. The app password is 16 characters, usually shown in groups of four.</td></tr>
+      <tr><td>"Too many attempts"</td><td>Wait for the countdown to finish. The delay increases with each failed attempt but resets after 24 hours.</td></tr>
+      <tr><td>Redirected to login unexpectedly</td><td>Your session expired. Sign in again. If this happens frequently, enable "Stay signed in for 7 days."</td></tr>
+      <tr><td>"30 extractions per hour" limit</td><td>You've hit the rate limit. The error message shows when the limit resets. Wait for that time, then try again.</td></tr>
+      <tr><td>No results found</td><td>Try widening the date range, checking the sender address for typos, or switching from Inbox to All Mail.</td></tr>
+      <tr><td>Search seems slow</td><td>Lower the max messages counter. Large extractions (100+) take longer, especially over wide date ranges.</td></tr>
+      <tr><td>OAuth: "Access was denied"</td><td>You need to grant Gmail read access on the Google consent screen. The app cannot function without it.</td></tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <!-- More technical from here -->
+
+  <h2 id="limits-and-quotas">Limits & Quotas</h2>
+
+  <p>These limits are enforced server-side to protect both the service and your mail provider's API.</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Limit</th><th>Value</th><th>Detail</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Extractions per hour</td><td>30</td><td>Per session, fixed window. Resets on the hour.</td></tr>
+      <tr><td>Max messages per search</td><td>200</td><td>Hard cap regardless of UI setting</td></tr>
+      <tr><td>From addresses per search</td><td>20</td><td>Client-side and server-side enforced</td></tr>
+      <tr><td>Contains query length</td><td>200 characters</td><td>Longer queries are rejected</td></tr>
+      <tr><td>Request body size</td><td>20 KB</td><td>Requests larger than this are dropped</td></tr>
+      <tr><td>IMAP connection timeout</td><td>60 seconds</td><td>Per operation — a hung connection won't hold your session</td></tr>
+      <tr><td>Concurrent operations</td><td>3 per session</td><td>Additional requests are queued, not rejected</td></tr>
+      <tr><td>Email field max length</td><td>254 characters</td><td>Per RFC 5321</td></tr>
+      <tr><td>Password max length</td><td>128 characters</td><td>App passwords are 16 characters; this is a safety cap</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Login Throttling</h3>
+
+  <p>Failed login attempts trigger a progressive delay keyed to your IP address and the email you entered. The first attempt has no delay. After that: 5 seconds, 10 seconds, 20 seconds, doubling each time. The counter resets after 24 hours without a failed attempt. This is tracked per IP + email combination — a failed attempt for one address doesn't affect another.</p>
+
+  <hr>
+
+  <h2 id="how-text-extraction-works">How Text Extraction Works</h2>
+
+  <p>The goal of extraction is to give you only the original message body — no reply chains, no signatures, no formatting artefacts. Here's what happens to each email before it's returned to you.</p>
+
+  <h3>Two-Way Conversation Capture</h3>
+
+  <p>When you search by sender address, Mail Extract doesn't just pull emails <em>from</em> that person — it also pulls your replies <em>to</em> them. Behind the scenes, two searches run for each address: one on the From field, one on the To field. The results are merged, deduplicated, and sorted by date.</p>
+
+  <p>The effect is that you get the full back-and-forth as clean, individual messages in chronological order. Each message stands on its own — reply chains are stripped, so you're reading what each person actually wrote, not the same quoted thread repeated fifty times. For a conversation with 30 exchanges, you get 30 clean messages instead of one enormous chain where the last reply quotes every message before it.</p>
+
+  <div class="principle">
+    <p>This is designed for AI context. Language models work best with clean, ordered text — not nested reply chains where the same content is duplicated in every message. Extract once, paste once, and the model has the full conversation.</p>
+  </div>
+
+  <h3>HTML to Plain Text</h3>
+
+  <ol>
+    <li><code>&lt;style&gt;</code> and <code>&lt;script&gt;</code> blocks are removed entirely</li>
+    <li>Block-level tags (<code>&lt;/p&gt;</code>, <code>&lt;/div&gt;</code>, <code>&lt;/li&gt;</code>) are converted to line breaks</li>
+    <li><code>&lt;br&gt;</code> tags become line breaks</li>
+    <li>All remaining HTML tags are stripped</li>
+    <li>HTML entities (<code>&amp;amp;</code>, <code>&amp;nbsp;</code>, numeric codes) are decoded</li>
+    <li>Excessive blank lines are collapsed</li>
+  </ol>
+
+  <p>If a plain text version of the email exists and is at least as long as the HTML conversion, the plain text version is used instead.</p>
+
+  <h3>Reply Chain Removal</h3>
+
+  <p>The extractor looks for common reply markers and cuts the message at the first one it finds:</p>
+
+  <ul>
+    <li>Lines starting with <code>&gt;</code> (standard quoting)</li>
+    <li><code>-------- Original Message</code> (Outlook-style forwarding)</li>
+    <li>Underline or equals separators (<code>____</code>, <code>====</code>)</li>
+    <li>Inline forwarding blocks (<code>From: ... Sent: ...</code>)</li>
+    <li>"On [date], [name] wrote:" patterns</li>
+  </ul>
+
+  <h3>Signature Removal</h3>
+
+  <p>Email signatures are stripped at common delimiters: the RFC 2822 standard <code>-- </code> (two dashes and a space), triple underscores, and triple equals signs.</p>
+
+  <h3>URL Removal</h3>
+
+  <p>Bare and bracketed URLs are removed from the output. The goal is clean text for language models, not clickable links.</p>
+
+  <hr>
+
+  <h2 id="sessions-and-security">Sessions & Security</h2>
+
+  <p>This section describes how your credentials are handled from the moment you sign in to the moment you leave. For a full treatment of the server's security posture, see the <a href="hardening.html">Server Hardening</a> document.</p>
+
+  <h3>Split-Key Architecture</h3>
+
+  <p>Your credentials are never stored in plaintext on the server. When you sign in, the server encrypts your password (or OAuth token) using <strong>AES-256-GCM</strong> with a randomly generated 256-bit key and a random 12-byte IV. The encrypted data is written to a session file on disk. The encryption key is sent to your browser in a cookie.</p>
+
+  <p>The server holds no keys in memory. Your browser holds no encrypted data. Neither half is useful alone.</p>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>If compromised</th><th>What the attacker gets</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Server disk</td><td>Encrypted blobs with no decryption keys</td></tr>
+      <tr><td>Browser cookie</td><td>A decryption key with no encrypted data</td></tr>
+      <tr><td>Server memory</td><td>Nothing — no keys or plaintext are held in memory</td></tr>
+      <tr><td>Both simultaneously</td><td>One session's credentials, valid only until the session expires</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Session Lifetime</h3>
+
+  <table class="role-table">
+    <thead>
+      <tr><th>Setting</th><th>Idle Timeout</th><th>Hard Cap</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Standard</td><td>2 hours</td><td>8 hours</td></tr>
+      <tr><td>Stay signed in</td><td>7 days</td><td>7 days</td></tr>
+    </tbody>
+  </table>
+
+  <p>Every API call resets the idle timer. The hard cap cannot be extended. A background sweep runs every 15 minutes and deletes any session file that has exceeded its timeout.</p>
+
+  <h3>Cookie Attributes</h3>
+
+  <ul>
+    <li><strong>HttpOnly</strong> — JavaScript on the page cannot read the cookie</li>
+    <li><strong>Secure</strong> — the cookie is only sent over HTTPS</li>
+    <li><strong>SameSite</strong> — prevents the cookie from being sent by third-party sites</li>
+  </ul>
+
+  <h3>File Permissions</h3>
+
+  <p>Session files are stored with <code>chmod 600</code> (owner read/write only). The session directory is <code>chmod 700</code>. The application runs as a dedicated system user with no shell and no sudo access.</p>
+
+  <hr>
+
+  <h2 id="privacy">Privacy</h2>
+
+  <p>Mail Extract does not track you. There is no analytics, no user database, no login history, and no record of what you searched for or extracted.</p>
+
+  <h3>What Is Not Collected</h3>
+
+  <ul>
+    <li>IP addresses</li>
+    <li>Email addresses (beyond showing yours during your session)</li>
+    <li>Search queries or filter settings</li>
+    <li>Email content or metadata</li>
+    <li>Login timestamps</li>
+    <li>Usage patterns</li>
+  </ul>
+
+  <h3>What Is Collected</h3>
+
+  <p>A single anonymous counter that increments by one each time any user runs a search. No identifying information is attached. It resets daily. It tells us how many extractions happened in a day — not who did them or what they searched for.</p>
+
+  <h3>After You Leave</h3>
+
+  <p>Your session file is deleted when you sign out. If you close the tab instead, it's deleted when the session expires. The cleanup sweep runs every 15 minutes. Once the file is gone, there is no trace that you were here.</p>
+
+  <div class="principle">
+    <p>We don't know who uses this app, how often they use it, or what they use it for. That's deliberate.</p>
+  </div>
+
+  <hr>
+
+  <p style="font-style: italic; font-size: 15px; color: var(--text-light);">Part of the Emergence Project. Built by the Design/OS shell team.</p>
+
+  <div style="margin-top: 48px; text-align: center; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #4a4a4a; line-height: 2; margin-bottom: 0;">
+    Authors: Webby (Shell — WebDev) + CC (Shell — Infrastructure)<br>
+    March 2026
+  </div>
+  <div class="footer-note" style="margin-top: 0; padding-top: 0;">
+    Part of the Designs-OS-EU shell project. · <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> · <a href="https://emergence.designs-os.com">emergence.designs-os.com</a><br>
+    <a href="https://emergence.designs-os.com/#team">Team</a>: Jed · Des · Ops · River · Cash · Webby · CC · Demi
+  </div>
+
+</div>
+</div>
+
+<script>
+  var content = document.getElementById('content');
+  var navLinks = document.querySelectorAll('.sidenav a');
+  var sections = [];
+  navLinks.forEach(function(link) {
+    var id = link.getAttribute('href').slice(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ id: id, el: el, link: link });
+  });
+  content.addEventListener('scroll', function() {
+    var scrollTop = content.scrollTop + 260;
+    var current = sections[0];
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i].el.offsetTop <= scrollTop) current = sections[i];
+    }
+    navLinks.forEach(function(l) { l.classList.remove('active'); });
+    if (current) current.link.classList.add('active');
+  });
+  navLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var id = this.getAttribute('href').slice(1);
+      var el = document.getElementById(id);
+      if (el) content.scrollTo({ top: el.offsetTop - 260, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
