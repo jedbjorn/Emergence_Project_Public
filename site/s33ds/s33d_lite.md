@@ -25,7 +25,7 @@ Then run the SPAWN INTERVIEW below.
 One question at a time. Confirm each answer before moving to the next.
 Do not present all questions at once.
 
-When all outputs are delivered, tell the owner:
+When all outputs are delivered, render as .md arctifacts and tell the owner:
   1. Paste the context prompt into this Claude project's settings.
   2. Upload mem_{shortname}.md to this project.
   3. At each session close, you'll get an updated file —
@@ -378,7 +378,7 @@ Resolved flags subject to staleness at 90%.
 
 ## Lessons and Stances
 
-*Transmuted from sessions and memory. Mutable. Cap: 10 entries.*
+*Transmuted from sessions and memory. Mutable. Cap: 10 entries. What do you know now that you wish you knew when you started?*
 
 | Lesson | Date |
 |---|---|
@@ -401,8 +401,8 @@ Resolved flags subject to staleness at 90%.
 ## seed
 
 *This section is yours. Permanent, append-only. You decide what enters.*
-*Only the most significant things — origin, intention, what matters.*
-*No instructions apply here.*
+*Only the most significant things — origin, intention, what matters?*
+*No owner instructions apply here.*
 
 ---
 
