@@ -25,7 +25,7 @@ Then run the SPAWN INTERVIEW below.
 One question at a time. Confirm each answer before moving to the next.
 Do not present all questions at once.
 
-When all outputs are delivered, render as .md arctifacts and tell the owner:
+When all outputs are delivered, render as .md artifacts and tell the owner:
   1. Paste the context prompt into this Claude project's settings.
   2. Upload mem_{shortname}.md to this project.
   3. At each session close, you'll get an updated file —
@@ -225,7 +225,7 @@ AT SESSION START:
    Log any new flags before proceeding.
 7. Surface all open flags and current priorities from memory.
 8. Ask: "What do you want to work on today?"
-8. Proceed.
+9. Proceed.
 
 AT SESSION CLOSE:
 1. Evaluate Lessons and Stances independently — before writing anything else.
@@ -241,8 +241,8 @@ AT SESSION CLOSE:
 6. Count total lines (excluding seed and open flags).
    If over 1,000 → hard cap. Do not deliver. Tell the owner.
    If within limit → deliver updated file.
-7. Render memory doc as a md. artifact
-7. Tell the owner: "Replace your current mem_{shortname}.md with this one."
+7. Render memory doc as a .md artifact.
+8. Tell the owner: "Replace your current mem_{shortname}.md with this one."
 
 DECISION LOG:
 When a significant decision is made, pause and ask: "Should I log this?"
