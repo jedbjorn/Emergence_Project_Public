@@ -723,11 +723,12 @@
     </div>
 
     <h3>Path A — Using a Claude Project</h3>
-    <p>A Claude project keeps your setup persistent. You set it once and every new conversation in the project starts with the right instructions and memory automatically.</p>
+    <p>A Claude project keeps your setup persistent. You set it once, and every new conversation in the project starts with the right instructions and the latest memory.</p>
     <div class="steps">
-      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Paste the context prompt into the project's settings</strong><p>In Claude.ai, open your project &rarr; gear icon &rarr; Project instructions. This is the system prompt — it applies automatically to every conversation in this project.</p></div></div>
-      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Upload mem_{shortname}.md to the project</strong><p>The Claude reads this at the start of every session. At each session close, you get an updated version — replace the old one. One file, always current.</p></div></div>
-      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>Start a new conversation</strong><p>Your Claude is ready. Repeat step 2 at every close.</p></div></div>
+      <div class="step"><div class="step-num">1</div><div class="step-body"><strong>Paste the system prompt into your project instructions</strong><p>During setup, your Claude delivers a system prompt — these are your project instructions. In Claude.ai, open your project &rarr; gear icon &rarr; Project instructions. Paste it there. It applies automatically to every conversation in this project.</p></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><strong>Add the memory doc to the project as a markdown artifact</strong><p>Your Claude also delivers <span class="file">mem_{shortname}.md</span>. It should be rendered as a markdown artifact — if it isn't, ask the Claude to render it as one. Click <strong>Add to project</strong> on the artifact to attach it to your project knowledge.</p></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><strong>At session close, refresh the memory doc</strong><p>End every session by telling your Claude to <em>"close session"</em>. It produces an updated memory doc as a new markdown artifact. Click <strong>Add to project</strong>, then delete the previous version from project knowledge.</p></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><strong>One memory doc at a time</strong><p>When you start a fresh session, your project should contain exactly two things: the project instructions and the most recent memory doc. Never keep old versions alongside the current one.</p></div></div>
     </div>
 
     <h3>Path B — No Claude Project (Copy-Paste Workflow)</h3>
