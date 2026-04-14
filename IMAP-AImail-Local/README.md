@@ -42,6 +42,7 @@ npm install
 ### macOS / Linux
 
 ```bash
+cd Emergence_Project_Public/IMAP-AImail-Local
 node AImail.js
 ```
 
@@ -50,6 +51,7 @@ Press `Ctrl+C` to stop.
 ### Windows — Command Prompt or PowerShell
 
 ```cmd
+cd Emergence_Project_Public/IMAP-AImail-Local
 node AImail.js
 ```
 
