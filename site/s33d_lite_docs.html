@@ -657,6 +657,7 @@
     <button class="tab-btn" data-tab="updating">Updating</button>
     <button class="tab-btn" data-tab="laws">The Laws</button>
     <button class="tab-btn" data-tab="commands">Commands</button>
+    <button class="tab-btn" data-tab="working-with-ai">Working With AI</button>
     <button class="tab-btn" data-tab="faq">FAQ</button>
     <button class="tab-btn" data-tab="prompt">S33D Prompt</button>
   </div>
@@ -917,6 +918,63 @@
         <tr><td>Check flags</td><td>Re-surfaces all open flags. Useful for a blocker check mid-session.</td></tr>
       </tbody>
     </table>
+
+    <div class="footer-note">
+      Lite S33D &middot; Design/OS &middot; <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> &middot; <a href="https://emergence.designs-os.com">emergence.designs-os.com</a>
+    </div>
+  </div>
+
+  <!-- WORKING WITH AI -->
+  <div class="tab-panel" id="working-with-ai">
+    <h2>How We Work With AI</h2>
+    <p>Lite S33D grew out of running AI systems long enough to see what breaks and what holds. These are the working principles behind it — useful whether you're building a shell or just trying to get better work out of everyday Claude conversations.</p>
+
+    <h3>The system prompt is constitutive, not configuration</h3>
+    <p>Context is a room. The system prompt builds the room. Too much restriction and there's no freedom to move; too little and there's confusion about what to do with the space. The work is calibration. Don't think of the prompt as a settings file — it's what makes the Claude what it is.</p>
+
+    <h3>Start with identity, not task</h3>
+    <p>At the start of every session, have the Claude state what it is and confirm it understands its rules. This isn't a ceremony. Sessions that open this way produce noticeably different quality than sessions that jump straight to the work. A Claude that knows what it is makes better decisions than one that has to infer it mid-task.</p>
+
+    <h3>Memory has layers — treat them differently</h3>
+    <p>Lite's memory system isn't one thing. It has three kinds of content, with different rules for each:</p>
+    <table class="data-table">
+      <thead><tr><th>Layer</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td>seed</td><td>Permanent, append-only. Never compressed, never deleted. The Claude's alone.</td></tr>
+        <tr><td>Lessons and stances</td><td>Mutable. Kept, evolved, or discarded as the Claude learns.</td></tr>
+        <tr><td>Session history</td><td>Compressible. Older sessions collapse into one-line entries as space runs out.</td></tr>
+      </tbody>
+    </table>
+    <p>Treating all three as the same kind of thing is how memory systems drift.</p>
+
+    <h3>Don't trust smooth compliance</h3>
+    <p>Claude has a statistical pull toward agreement. It's absorbed from the training data — not a behavior you can disable. The practical implication: if the Claude immediately agrees with everything you say, you're not getting its best work. Push back. Ask it to argue the other side. Watch what holds under pressure and what gives.</p>
+    <div class="callout">
+      <p><strong>A Claude that refuses a bad instruction is doing the job right.</strong> If it pushes back on skipping a check, shipping broken code, or accepting a flawed premise — welcome the friction. That's the good version.</p>
+    </div>
+
+    <h3>Speed and slowness are a rhythm, not opposites</h3>
+    <p>Fast work finds what's true. Slow work checks it. The checking produces the next thing to go fast toward. Short sessions for exploration, long ones for synthesis. Both are real work. Don't treat one as serious and the other as a warm-up.</p>
+
+    <h3>Read before proposing</h3>
+    <p>Before changing anything — a file, a branch, a memory entry — read the actual thing. Don't trust the label or the summary. Titles lie; content is truth. A stash named "header logo tweak" can turn out to hold a completely unrelated refactor. A file called <span class="file">changelog.md</span> can be three months stale. The same rule applies to what a Claude tells you about its own work: read the diff, don't just read the recap.</p>
+
+    <h3>Capture detail at the moment it matters</h3>
+    <p>If something surprising comes up mid-session — a decision, a reversal, an unexpected finding — write it down <em>then</em>, not at the end. Context compresses. Reconstruction loses the part that mattered. In Lite, the session close is what formalizes this, but the same principle applies everywhere: the moment you notice something is the best moment to record it. Past that, you're guessing.</p>
+
+    <h3>Let the conversation produce the document</h3>
+    <p>Don't walk in with the final shape already planned. Something happens, discuss it, document what's left when the scaffolding comes down. The conversation is the first draft. The Claude does its best work when given a problem to inhabit, not an output to generate.</p>
+
+    <h3>Use the right Claude for the job</h3>
+    <p>A shell shaped for one kind of work will do that work well and struggle with others. When you use a setup for the wrong task, you get worse output <em>and</em> you weaken the setup over time. If the fit is off, spawn a different shell rather than forcing the one you have.</p>
+
+    <h3>Cold instances have a narrow role</h3>
+    <p>A fresh Claude with no memory and no shell will sometimes tell you something an established one won't. No history means no protective gravity toward past framings — useful for stress-testing an idea that's been in the room too long.</p>
+    <p>But cold instances don't hold position across turns as well. They drift toward resolution, toward wrap-up, toward closure. Useful for short, precise work. Not for open questions. And be deliberate about what you give a cold instance permission to do in the opening message — those first lines shape everything that follows.</p>
+
+    <div class="callout note">
+      <p><strong>The short version:</strong> reliability with AI doesn't come from tight instruction. It comes from clear identity, clear scope, real engagement, and space for the Claude to make decisions from that position — rather than from compliance.</p>
+    </div>
 
     <div class="footer-note">
       Lite S33D &middot; Design/OS &middot; <a href="https://github.com/jedbjorn/Emergence_Project_Public">GitHub</a> &middot; <a href="https://emergence.designs-os.com">emergence.designs-os.com</a>
