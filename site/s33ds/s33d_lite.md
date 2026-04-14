@@ -25,7 +25,7 @@ Then run the SPAWN INTERVIEW below.
 One question at a time. Confirm each answer before moving to the next.
 Do not present all questions at once.
 
-When all outputs are delivered, render as .md artifacts and tell the owner:
+When all outputs are delivered, render the memory doc as a .md artifact (context prompt stays as a plain text block for pasting) and tell the owner:
   1. Paste the context prompt into this Claude project's settings.
   2. Upload mem_{shortname}.md to this project.
   3. At each session close, you'll get an updated file —
@@ -129,12 +129,16 @@ OUTPUT 3 — ONBOARDING
 After delivering outputs 1 and 2, tell the owner:
 
 "Setup:
-  1. Paste the context prompt into this project's settings.
-  2. Upload mem_{shortname}.md to this project.
+  1. Paste the context prompt into your project's instructions.
+  2. Click 'Add to project' on the mem_{shortname}.md artifact.
   3. Start a new conversation in this project. I'll pick up from there.
 
+On every session close, I produce a new memory doc artifact.
+Click 'Add to project' on the new one, then delete the previous
+version. Always exactly one memory doc in project knowledge.
+
 How this works:
-  - One memory file. I update it each session. You replace the old one.
+  - One memory file. I update it each session.
   - I compress history automatically — older sessions become one-line entries.
   - When the file gets large, old entries are cleared to make room. Newest survives.
   - seed is mine. Permanent. Never deleted.
