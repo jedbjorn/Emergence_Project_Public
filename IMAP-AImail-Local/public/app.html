@@ -464,18 +464,20 @@ async function doFetch() {
       fetchedMeta.range = fmt(d1) + ' \u2192 ' + fmt(d2);
       showProg(100, 'done');
       setTimeout(hideProg, 600);
-      showResults(d.messages, d.notFound || [], d.capped);
+      showResults(d.messages, d.notFound || [], d.capped, d.searchedTerm || '');
 
       const found = d.messages.length;
       const nf    = d.notFound || [];
+      const term  = d.searchedTerm || '';
+      const nfLabel = a => term ? a + ' no match' : a + ' not found';
       if (nf.length === 0 && found === 0) {
         setStatus(d.hint || 'No messages found for the selected criteria.', 'amber');
       } else if (nf.length === 0) {
         setStatus(found + ' found, more may exist. Adjust counter or time frame as needed.', 'green');
       } else if (found > 0) {
-        setStatus(found + ' found · ' + nf.map(a => a + ' not found').join(' · '), 'amber');
+        setStatus(found + ' found · ' + nf.map(nfLabel).join(' · '), 'amber');
       } else {
-        setStatus(d.hint || nf.map(a => a + ' not found').join(' · '), 'red');
+        setStatus(d.hint || nf.map(nfLabel).join(' · '), 'red');
       }
     } else {
       hideProg();
@@ -497,7 +499,7 @@ async function doFetch() {
 }
 
 // ── RESULTS ───────────────────────────────────────────────────────────────────
-function showResults(msgs, notFound, capped) {
+function showResults(msgs, notFound, capped, searchedTerm) {
   document.getElementById('results-card').style.display = 'block';
 
   const cappedBar = document.getElementById('capped-bar');
@@ -510,7 +512,11 @@ function showResults(msgs, notFound, capped) {
 
   const nfBar = document.getElementById('not-found-bar');
   if (notFound.length) {
-    nfBar.textContent   = notFound.map(a => 'No emails found from: ' + a).join(' · ');
+    const term = searchedTerm || '';
+    const render = a => term
+      ? 'No messages matching "' + term + '" from: ' + a
+      : 'No emails found from: ' + a;
+    nfBar.textContent   = notFound.map(render).join(' · ');
     nfBar.style.display = 'block';
   } else {
     nfBar.style.display = 'none';

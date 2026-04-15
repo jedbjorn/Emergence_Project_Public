@@ -348,7 +348,11 @@ async function fetchMessagesForAddress(sid, email, password, folder, from, dateF
         return results;
       }
 
-      const limited = allUids.slice(0, limit || MAX_MESSAGES);
+      // Take the NEWEST matching UIDs. imapflow returns UIDs ascending (oldest first);
+      // slicing from the end preserves the most recent messages, which matches the
+      // newest-first display order users expect.
+      const cap = limit || MAX_MESSAGES;
+      const limited = allUids.length > cap ? allUids.slice(-cap) : allUids;
 
       for await (const msg of client.fetch(limited, {
         envelope: true,
@@ -614,13 +618,20 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
     const messages = filtered.map(({ uid: _uid, ...rest }) => rest);
 
     if (messages.length === 0) {
-      const hint = notFound.length > 0
-        ? 'No messages found from ' + notFound.join(', ') + ' in the selected date range.'
-        : 'No messages found for the selected criteria. Try a wider date range or check the sender address.';
-      return res.json({ ok: true, messages: [], notFound, hint });
+      let hint;
+      if (notFound.length > 0) {
+        hint = contains
+          ? 'No messages matching "' + contains + '" from ' + notFound.join(', ') + ' in the selected date range.'
+          : 'No messages found from ' + notFound.join(', ') + ' in the selected date range.';
+      } else {
+        hint = contains
+          ? 'No messages matched "' + contains + '" for the selected criteria. Try a wider date range or different keywords.'
+          : 'No messages found for the selected criteria. Try a wider date range or check the sender address.';
+      }
+      return res.json({ ok: true, messages: [], notFound, hint, searchedTerm: contains || '' });
     }
 
-    res.json({ ok: true, messages, notFound, capped });
+    res.json({ ok: true, messages, notFound, capped, searchedTerm: contains || '' });
   } catch (err) {
     if (err.message === 'IMAP_TIMEOUT') {
       return res.status(504).json({ ok: false, error: 'Mail server timed out. Please try again.' });

@@ -6,6 +6,8 @@ Feature and security updates for the AI-Mail Extract app (IMAP + OAuth tracks).
 
 ## 2026-04-15
 - IMAP: keyword search (`contains`) now runs server-side via IMAP TEXT, before the maxMessages cap. Previously the filter ran client-side after the cap, silently dropping matches outside the first N results. OAuth/Gmail track was already correct.
+- IMAP: when more matches than the cap exist, the app now keeps the **newest** results (previously it kept the oldest, then displayed newest-first — producing confusing "old-looking" results for active mailboxes).
+- IMAP: "No emails found from X" message now reads "No messages matching …" when a keyword was present, so users can tell whether the address, the term, or both are at fault.
 
 ## 2026-03-31
 - addChip: strip angle brackets, commas, spaces; support pasted comma-separated lists
