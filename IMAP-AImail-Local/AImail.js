@@ -313,7 +313,7 @@ function releaseImap(sid) {
 }
 
 // ── BODY EXTRACTION ───────────────────────────────────────────────────────────
-async function fetchMessagesForAddress(sid, email, password, folder, from, dateFrom, dateTo, sessionEmail, limit) {
+async function fetchMessagesForAddress(sid, email, password, folder, from, dateFrom, dateTo, sessionEmail, limit, contains) {
   await acquireImap(sid);
   const client  = makeClient(email, password);
   const results = [];
@@ -327,14 +327,18 @@ async function fetchMessagesForAddress(sid, email, password, folder, from, dateF
       const before = new Date(new Date(dateTo).getTime() + 86_400_000);
 
       const searchCriteria = { since, before };
-      if (from) searchCriteria.from = from;
+      if (from)     searchCriteria.from = from;
+      // TEXT searches headers + body server-side; covers subject too.
+      if (contains) searchCriteria.text = contains;
 
       const fromUids = await client.search(searchCriteria, { uid: true });
 
       // Also search replies (to:addr) when filtering by address
       let allUids = fromUids;
       if (from) {
-        const toUids = await client.search({ since, before, to: from }, { uid: true });
+        const toCriteria = { since, before, to: from };
+        if (contains) toCriteria.text = contains;
+        const toUids = await client.search(toCriteria, { uid: true });
         const seen = new Set(fromUids);
         for (const uid of toUids) { if (!seen.has(uid)) allUids.push(uid); }
       }
@@ -572,7 +576,7 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
     if (fromAddresses.length === 0) {
       // No from filter — single search, no address tracking
       const msgs = await fetchMessagesForAddress(
-        req.sessionId, session.email, password, folder, null, dateFrom, dateTo, session.email, maxMessages + 1
+        req.sessionId, session.email, password, folder, null, dateFrom, dateTo, session.email, maxMessages + 1, contains
       );
       if (msgs.length > maxMessages) { capped = true; msgs.length = maxMessages; }
       msgs.forEach(m => { if (!seen.has(m.uid)) { seen.add(m.uid); merged.push(m); } });
@@ -580,7 +584,7 @@ app.post('/api/fetch', requireSessionApi, async (req, res) => {
       // One search per address — OR semantics, deduplicate by UID
       for (const addr of fromAddresses) {
         const msgs = await fetchMessagesForAddress(
-          req.sessionId, session.email, password, folder, addr, dateFrom, dateTo, session.email, maxMessages + 1
+          req.sessionId, session.email, password, folder, addr, dateFrom, dateTo, session.email, maxMessages + 1, contains
         );
         if (msgs.length === 0) {
           notFound.push(addr);

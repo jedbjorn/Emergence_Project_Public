@@ -4,6 +4,9 @@ Feature and security updates for the AI-Mail Extract app (IMAP + OAuth tracks).
 
 ---
 
+## 2026-04-15
+- IMAP: keyword search (`contains`) now runs server-side via IMAP TEXT, before the maxMessages cap. Previously the filter ran client-side after the cap, silently dropping matches outside the first N results. OAuth/Gmail track was already correct.
+
 ## 2026-03-31
 - addChip: strip angle brackets, commas, spaces; support pasted comma-separated lists
 - addChip: extract email from display name + angle bracket format (`Name <email>`)
