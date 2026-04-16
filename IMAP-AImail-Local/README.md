@@ -37,6 +37,15 @@ npm install
 
 ---
 
+## Update
+
+```bash
+cd ~/Emergence_Project_Public/IMAP-AImail-Local
+git pull
+```
+
+---
+
 ## Running the app
 
 ### macOS / Linux
@@ -57,6 +66,51 @@ node AImail.js
 
 Press `Ctrl+C` to stop.
 
+---
+
+## Running as a Background Service with PM2 (macOS/Linux)
+
+PM2 keeps the app running in the background and auto-starts it on reboot.
+
+**1. Install NVM and pin Node version**
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.zshrc
+nvm install 24
+nvm alias default 24
+```
+
+**2. Install PM2**
+```bash
+npm install -g pm2
+```
+
+**3. Start the app**
+```bash
+cd IMAP-AImail-Local
+pm2 start AImail.js --name aimail
+```
+
+**4. Enable auto-start on reboot**
+```bash
+pm2 save
+pm2 startup
+```
+Copy and run the `sudo` command that PM2 outputs.
+
+**Useful commands**
+```bash
+pm2 status          # check if running
+pm2 logs aimail     # view live logs
+pm2 restart aimail  # restart after updates
+pm2 stop aimail     # stop the service
+```
+
+**Updating the app**
+```bash
+git pull
+pm2 restart aimail
+```
 ---
 
 ## Usage
